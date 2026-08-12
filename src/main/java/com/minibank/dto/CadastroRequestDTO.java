@@ -24,6 +24,10 @@ public class CadastroRequestDTO {
     @Size(min = 6, message = "A senha precisa ter no mínimo 6 caracteres")
     private String senha;
 
+    @NotBlank(message = "A senha do painel é obrigatória")
+    @Size(min = 4, message = "A senha do painel precisa ter no mínimo 4 caracteres")
+    private String senhaPainel;
+
     public CadastroRequestDTO() {
     }
 
@@ -49,5 +53,13 @@ public class CadastroRequestDTO {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public String getSenhaPainel() {
+        return senhaPainel;
+    }
+
+    public void setSenhaPainel(String senhaPainel) {
+        this.senhaPainel = senhaPainel;
     }
 }

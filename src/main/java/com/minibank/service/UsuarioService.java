@@ -38,8 +38,9 @@ public class UsuarioService {
         }
 
         String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
+        String senhaPainelCriptografada = passwordEncoder.encode(dto.getSenhaPainel());
 
-        Usuario novoUsuario = new Usuario(dto.getNome(), dto.getEmail(), senhaCriptografada);
+        Usuario novoUsuario = new Usuario(dto.getNome(), dto.getEmail(), senhaCriptografada, senhaPainelCriptografada);
 
         Usuario usuarioSalvo = usuarioRepository.salvar(novoUsuario);
 

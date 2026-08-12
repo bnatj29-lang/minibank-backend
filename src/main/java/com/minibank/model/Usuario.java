@@ -19,16 +19,27 @@ public class Usuario {
     // Guardamos o "hash" gerado pelo BCrypt (ver UsuarioService).
     private String senhaHash;
 
+    private String senhaPainelHash;
+
     private LocalDateTime criadoEm;
 
     public Usuario() {
     }
 
-    public Usuario(String nome, String email, String senhaHash) {
+    public Usuario(String nome, String email, String senhaHash, String senhaPainelHash) {
         this.nome = nome;
         this.email = email;
         this.senhaHash = senhaHash;
+        this.senhaPainelHash = senhaPainelHash;
         this.criadoEm = LocalDateTime.now();
+    }
+
+    public Usuario(String nome, String email, String senhaHash, String senhaPainelHash, LocalDateTime criadoEm) {
+        this.nome = nome;
+        this.email = email;
+        this.senhaHash = senhaHash;
+        this.senhaPainelHash = senhaPainelHash;
+        this.criadoEm = criadoEm;
     }
 
     public Long getId() {
@@ -61,6 +72,14 @@ public class Usuario {
 
     public void setSenhaHash(String senhaHash) {
         this.senhaHash = senhaHash;
+    }
+
+    public void setSenhaPainelHash (String senhaPainelHash) {
+        this.senhaPainelHash = senhaPainelHash;
+    }
+
+    public String getSenhaPainelHash() {
+        return senhaPainelHash;
     }
 
     public LocalDateTime getCriadoEm() {

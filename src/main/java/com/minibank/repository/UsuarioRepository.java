@@ -44,7 +44,7 @@ public class UsuarioRepository {
     // INSERT explícito. Usamos GeneratedKeyHolder para recuperar o "id"
     // que o MySQL gera automaticamente (AUTO_INCREMENT) após o insert.
     public Usuario salvar(Usuario usuario) {
-        String sql = "INSERT INTO usuario (nome, email, senha_hash, criado_em) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO usuario (nome, email, senha_hash, senha_painel_hash, criado_em) VALUES (?, ?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -52,7 +52,8 @@ public class UsuarioRepository {
             ps.setString(1, usuario.getNome());
             ps.setString(2, usuario.getEmail());
             ps.setString(3, usuario.getSenhaHash());
-            ps.setTimestamp(4, Timestamp.valueOf(usuario.getCriadoEm()));
+            ps.setString(4, usuario.getSenhaPainelHash() );
+            ps.setTimestamp(5, Timestamp.valueOf(usuario.getCriadoEm()));
             return ps;
         }, keyHolder);
 
@@ -69,6 +70,7 @@ public class UsuarioRepository {
         usuario.setNome(rs.getString("nome"));
         usuario.setEmail(rs.getString("email"));
         usuario.setSenhaHash(rs.getString("senha_hash"));
+        usuario.setSenhaPainelHash(rs.getString("senha_painel_hash"));
         usuario.setCriadoEm(rs.getTimestamp("criado_em").toLocalDateTime());
         return usuario;
     }

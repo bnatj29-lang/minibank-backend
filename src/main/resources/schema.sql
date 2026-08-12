@@ -7,5 +7,6 @@ CREATE TABLE IF NOT EXISTS usuario (
     nome VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     senha_hash VARCHAR(255) NOT NULL,
+    senha_painel_hash VARCHAR(255) NOT NULL,
     criado_em TIMESTAMP NOT NULL
-);
+    );
