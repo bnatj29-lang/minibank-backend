@@ -32,11 +32,13 @@ public class UsuarioRepository {
         return total != null && total > 0;
     }
 
-    public Optional<Usuario> findByEmail(String email) {
-        String sql = "SELECT id, nome, email, senha_hash, criado_em FROM usuario WHERE email = ?";
-        return jdbcTemplate.query(sql, this::mapearUsuario, email)
-                .stream()
-                .findFirst();
+    public String findByEmail(String email) {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
+        Integer total = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        if (total > 0){
+            return "Email já cadastrado";
+        }
+        return "Email não cadastrado";
     }
 
     // INSERT explícito. Usamos GeneratedKeyHolder para recuperar o "id"

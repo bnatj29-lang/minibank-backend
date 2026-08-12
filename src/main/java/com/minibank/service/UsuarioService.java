@@ -1,10 +1,12 @@
 package com.minibank.service;
 
+import com.minibank.dto.BuscarEmailRequestDTO;
 import com.minibank.dto.CadastroRequestDTO;
 import com.minibank.dto.UsuarioResponseDTO;
 import com.minibank.exception.EmailJaCadastradoException;
 import com.minibank.model.Usuario;
 import com.minibank.repository.UsuarioRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -42,5 +44,9 @@ public class UsuarioService {
         Usuario usuarioSalvo = usuarioRepository.salvar(novoUsuario);
 
         return new UsuarioResponseDTO(usuarioSalvo);
+    }
+
+    public String buscarPorEmail(@Valid BuscarEmailRequestDTO dto) {
+        return usuarioRepository.findByEmail(dto.getEmail());
     }
 }

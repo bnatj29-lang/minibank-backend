@@ -1,5 +1,6 @@
 package com.minibank.controller;
 
+import com.minibank.dto.BuscarEmailRequestDTO;
 import com.minibank.dto.CadastroRequestDTO;
 import com.minibank.dto.UsuarioResponseDTO;
 import com.minibank.service.UsuarioService;
@@ -30,6 +31,11 @@ public class UsuarioController {
     public ResponseEntity<UsuarioResponseDTO> cadastrar(@Valid @RequestBody CadastroRequestDTO dto) {
         UsuarioResponseDTO usuarioCriado = usuarioService.cadastrar(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCriado);
+    }
+    @GetMapping("/buscar")
+    public ResponseEntity<String> buscar(@Valid @RequestBody BuscarEmailRequestDTO dto) {
+        String usuarioEncontrado = usuarioService.buscarPorEmail(dto);
+        return ResponseEntity.ok(usuarioEncontrado);
     }
 
 }
