@@ -18,7 +18,7 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 - MySQL 8
 - Docker Compose
 
-## O que instalar
+## Programas necessários
 
 ### Obrigatório
 
@@ -29,7 +29,7 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 | [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Executar o MySQL pelo Docker Compose |
 | [Git](https://git-scm.com/downloads) | Clonar e versionar o projeto |
 
-> Este repositório ainda não possui Maven Wrapper (`mvnw`), portanto o Maven precisa estar instalado no computador.
+> Este repositório ainda não possui Maven Wrapper (`mvnw`), portanto o Maven precisa estar instalado no computador e disponível no `PATH`.
 
 ### Recomendado, mas opcional
 
@@ -41,11 +41,21 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 
 O IntelliJ, o Postman e o Workbench ajudam no desenvolvimento, mas não são necessários para iniciar o projeto pelo terminal.
 
-## Como rodar o projeto
+## Configuração no macOS
 
-### 1. Confirme as instalações
+### 1. Instale os programas
 
-Abra um terminal e execute, nesta ordem:
+Instale o JDK 17, Maven, Git e Docker Desktop pelos links da seção anterior. Se você já utiliza o [Homebrew](https://brew.sh/), pode instalar Java, Maven e Git pelo Terminal:
+
+```bash
+brew install openjdk@17 maven git
+```
+
+O Docker Desktop deve ser instalado separadamente. Depois da instalação, abra o aplicativo e aguarde até o Docker ficar disponível.
+
+### 2. Confirme as instalações
+
+Abra o Terminal e execute:
 
 ```bash
 java -version
@@ -57,7 +67,7 @@ git --version
 
 O Java deve indicar a versão 17 ou superior. Se algum comando não for encontrado, instale o programa correspondente antes de continuar.
 
-### 2. Obtenha o projeto
+### 3. Clone e acesse o projeto
 
 Se você ainda não clonou o repositório:
 
@@ -66,22 +76,77 @@ git clone URL_DO_REPOSITORIO
 cd minibank-backend
 ```
 
-Se o projeto já estiver no computador, apenas abra o terminal dentro da pasta `minibank-backend`.
+Se o projeto já estiver no computador, use `cd` para acessar a pasta onde ele foi salvo.
 
-### 3. Inicie o Docker Desktop
+### 4. Inicie o banco e a API
 
-Abra o Docker Desktop e aguarde até ele indicar que o Docker está em execução.
-
-### 4. Suba o banco MySQL
-
-Dentro da pasta do projeto, execute:
+Com o Docker Desktop aberto, execute dentro da pasta do projeto:
 
 ```bash
 docker compose up -d
 docker compose ps
+mvn spring-boot:run
 ```
 
-O container criado terá estas configurações:
+Mantenha esse terminal aberto enquanto usar a API. Para encerrar a aplicação, pressione `Control + C`.
+
+## Configuração no Windows
+
+### 1. Instale os programas
+
+Instale pelos links da seção **Programas necessários**:
+
+1. JDK 17 ou superior.
+2. Maven.
+3. Git.
+4. Docker Desktop.
+
+Durante a instalação, permita que Java, Maven e Git sejam adicionados ao `PATH`. O Docker Desktop pode solicitar a instalação ou atualização do WSL 2; nesse caso, siga as instruções exibidas pelo instalador e reinicie o computador quando solicitado.
+
+Depois, abra o Docker Desktop e aguarde até o Docker ficar disponível.
+
+### 2. Confirme as instalações
+
+Abra o **PowerShell** e execute:
+
+```powershell
+java -version
+mvn -version
+docker --version
+docker compose version
+git --version
+```
+
+O Java deve indicar a versão 17 ou superior. Se algum comando não for reconhecido, feche e abra o PowerShell novamente. Se o problema continuar, confira a instalação e o `PATH` do programa.
+
+### 3. Clone e acesse o projeto
+
+```powershell
+git clone URL_DO_REPOSITORIO
+cd minibank-backend
+```
+
+Se o projeto já estiver no computador, use `cd` para acessar a pasta. Exemplo:
+
+```powershell
+cd C:\Users\SEU_USUARIO\Downloads\minibank-backend
+```
+
+### 4. Inicie o banco e a API
+
+Com o Docker Desktop aberto, execute dentro da pasta do projeto:
+
+```powershell
+docker compose up -d
+docker compose ps
+mvn spring-boot:run
+```
+
+Mantenha esse PowerShell aberto enquanto usar a API. Para encerrar a aplicação, pressione `Ctrl + C`.
+
+## O que acontece durante a inicialização
+
+O comando `docker compose up -d` cria e inicia o container do MySQL com estas configurações:
 
 | Configuração | Valor |
 | --- | --- |
@@ -92,21 +157,13 @@ O container criado terá estas configurações:
 | Usuário | `root` |
 | Senha | `mini2026` |
 
-O MySQL pode levar alguns segundos para ficar pronto na primeira execução. Para acompanhar a inicialização:
+O MySQL pode levar alguns segundos para ficar pronto na primeira execução. No macOS ou Windows, acompanhe a inicialização com:
 
 ```bash
 docker compose logs -f mysql
 ```
 
 Quando aparecer a mensagem de que o servidor está pronto para conexões, pressione `Ctrl + C` para sair dos logs. Isso não encerra o container.
-
-### 5. Inicie a API
-
-Com o MySQL em execução, rode:
-
-```bash
-mvn spring-boot:run
-```
 
 Quando a inicialização terminar, a API estará disponível em:
 
@@ -116,7 +173,6 @@ http://localhost:8080
 
 Na primeira inicialização, o Spring executa automaticamente o arquivo `src/main/resources/schema.sql` e cria as tabelas `usuario` e `crianca`.
 
-Mantenha esse terminal aberto enquanto estiver usando a API. Para encerrá-la, pressione `Ctrl + C`.
 
 ## Testando o cadastro
 
@@ -146,7 +202,7 @@ Mantenha esse terminal aberto enquanto estiver usando a API. Para encerrá-la, p
 
 Um cadastro realizado com sucesso retorna o status HTTP `201 Created`.
 
-### Com curl
+### Com curl no macOS
 
 ```bash
 curl -i -X POST http://localhost:8080/contas/cadastro \
@@ -165,6 +221,33 @@ curl -i -X POST http://localhost:8080/contas/cadastro \
       }
     ]
   }'
+```
+
+### Com curl no Windows (PowerShell)
+
+No PowerShell, use `curl.exe` e grave o JSON em uma variável:
+
+```powershell
+$body = @'
+{
+  "responsavel": {
+    "nome": "Bruna Silva",
+    "email": "bruna@email.com",
+    "senha": "123456",
+    "senhaPainel": "1234"
+  },
+  "crianca": [
+    {
+      "nome": "Ana",
+      "idade": 10
+    }
+  ]
+}
+'@
+
+curl.exe -i -X POST http://localhost:8080/contas/cadastro `
+  -H "Content-Type: application/json" `
+  -d $body
 ```
 
 ## Acessando o banco pelo MySQL Workbench
@@ -269,7 +352,7 @@ src/main/resources/
 
 ## Resumo rápido dos comandos
 
-Para quem já instalou os pré-requisitos e clonou o projeto:
+### macOS
 
 ```bash
 cd minibank-backend
@@ -278,4 +361,13 @@ docker compose ps
 mvn spring-boot:run
 ```
 
-Depois, teste `POST http://localhost:8080/contas/cadastro` no Postman ou com curl.
+### Windows (PowerShell)
+
+```powershell
+cd minibank-backend
+docker compose up -d
+docker compose ps
+mvn spring-boot:run
+```
+
+Depois, teste `POST http://localhost:8080/contas/cadastro` no Postman ou com o comando curl correspondente ao seu sistema.
