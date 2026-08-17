@@ -1,93 +1,281 @@
-# minibank-backend
+# Minibank Backend
 
-Backend do projeto minibank, feito em Java com Spring Boot.
-Acesso ao banco de dados feito com **JdbcTemplate e SQL explícito** (sem Hibernate/JPA), para deixar claro exatamente o que está sendo executado no banco.
+API REST do projeto **Minibank**, desenvolvida em Java 17 com Spring Boot.
 
-## Funcionalidade implementada nesta etapa
-- Cadastro de usuário (responsável): `POST /usuarios/cadastro`
+O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JPA. O Docker é usado para executar o banco de dados; a aplicação Spring Boot é executada localmente com Maven.
 
----
+## Funcionalidade disponível
 
-## 1. Verificando se Java e Maven estão instalados
+- Cadastro de responsável e criança(s): `POST /contas/cadastro`
 
-Antes de rodar o projeto, confira no terminal:
+## Tecnologias
+
+- Java 17
+- Spring Boot 3.3
+- Maven
+- Spring JDBC (`JdbcTemplate`)
+- Spring Security e BCrypt
+- MySQL 8
+- Docker Compose
+
+## O que instalar
+
+### Obrigatório
+
+| Programa | Para que serve |
+| --- | --- |
+| [JDK 17](https://adoptium.net/) ou superior | Compilar e executar a aplicação Java |
+| [Maven](https://maven.apache.org/download.cgi) | Baixar as dependências e iniciar o Spring Boot |
+| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Executar o MySQL pelo Docker Compose |
+| [Git](https://git-scm.com/downloads) | Clonar e versionar o projeto |
+
+> Este repositório ainda não possui Maven Wrapper (`mvnw`), portanto o Maven precisa estar instalado no computador.
+
+### Recomendado, mas opcional
+
+| Programa | Para que serve |
+| --- | --- |
+| [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) | Abrir, editar e executar o projeto Java |
+| [Postman](https://www.postman.com/downloads/) | Fazer requisições e testar a API |
+| [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) | Visualizar o banco, as tabelas e os registros |
+
+O IntelliJ, o Postman e o Workbench ajudam no desenvolvimento, mas não são necessários para iniciar o projeto pelo terminal.
+
+## Como rodar o projeto
+
+### 1. Confirme as instalações
+
+Abra um terminal e execute, nesta ordem:
 
 ```bash
 java -version
+mvn -version
+docker --version
+docker compose version
+git --version
 ```
-Deve aparecer algo como `openjdk version "17..."` ou superior. Se der erro de "comando não encontrado", é preciso instalar o JDK 17+.
+
+O Java deve indicar a versão 17 ou superior. Se algum comando não for encontrado, instale o programa correspondente antes de continuar.
+
+### 2. Obtenha o projeto
+
+Se você ainda não clonou o repositório:
 
 ```bash
-mvn -version
+git clone URL_DO_REPOSITORIO
+cd minibank-backend
 ```
-Deve mostrar a versão do Maven e, junto, qual Java ele está usando. Se der erro, é preciso instalar o Maven (ou usar o `./mvnw` que já vem no projeto, que não depende de instalação separada).
 
-Se o projeto já tiver o Maven Wrapper (`mvnw` / `mvnw.cmd`), dá pra rodar os comandos abaixo trocando `mvn` por `./mvnw` (Linux/Mac) ou `mvnw.cmd` (Windows), mesmo sem o Maven instalado globalmente.
+Se o projeto já estiver no computador, apenas abra o terminal dentro da pasta `minibank-backend`.
 
----
+### 3. Inicie o Docker Desktop
 
-## 2. Pré-requisitos
-- Java 17+
-- Maven (ou usar o `./mvnw`)
-- MySQL rodando localmente (Workbench, XAMPP, Docker, etc.)
+Abra o Docker Desktop e aguarde até ele indicar que o Docker está em execução.
 
-## 3. Como rodar
-1. Garanta que o MySQL está rodando localmente na porta padrão (3306)
-2. Ajuste usuário/senha em `src/main/resources/application.properties` se necessário (o padrão é `root`/`root`)
-3. O banco `minibank` é criado automaticamente na primeira conexão (`createDatabaseIfNotExist=true`), e a tabela `responsavel` é criada pelo `schema.sql`
-4. Rode:
+### 4. Suba o banco MySQL
+
+Dentro da pasta do projeto, execute:
+
+```bash
+docker compose up -d
+docker compose ps
+```
+
+O container criado terá estas configurações:
+
+| Configuração | Valor |
+| --- | --- |
+| Container | `minibank-mysql` |
+| Host | `localhost` |
+| Porta no computador | `3308` |
+| Banco | `minibank` |
+| Usuário | `root` |
+| Senha | `mini2026` |
+
+O MySQL pode levar alguns segundos para ficar pronto na primeira execução. Para acompanhar a inicialização:
+
+```bash
+docker compose logs -f mysql
+```
+
+Quando aparecer a mensagem de que o servidor está pronto para conexões, pressione `Ctrl + C` para sair dos logs. Isso não encerra o container.
+
+### 5. Inicie a API
+
+Com o MySQL em execução, rode:
+
 ```bash
 mvn spring-boot:run
 ```
-5. A API sobe em `http://localhost:8080`
 
-## 4. Testando o cadastro (exemplo com curl)
+Quando a inicialização terminar, a API estará disponível em:
+
+```text
+http://localhost:8080
+```
+
+Na primeira inicialização, o Spring executa automaticamente o arquivo `src/main/resources/schema.sql` e cria as tabelas `usuario` e `crianca`.
+
+Mantenha esse terminal aberto enquanto estiver usando a API. Para encerrá-la, pressione `Ctrl + C`.
+
+## Testando o cadastro
+
+### Com Postman
+
+1. Crie uma requisição do tipo `POST`.
+2. Use a URL `http://localhost:8080/contas/cadastro`.
+3. Na aba **Body**, escolha **raw** e selecione **JSON**.
+4. Envie o conteúdo abaixo:
+
+```json
+{
+  "responsavel": {
+    "nome": "Bruna Silva",
+    "email": "bruna@email.com",
+    "senha": "123456",
+    "senhaPainel": "1234"
+  },
+  "crianca": [
+    {
+      "nome": "Ana",
+      "idade": 10
+    }
+  ]
+}
+```
+
+Um cadastro realizado com sucesso retorna o status HTTP `201 Created`.
+
+### Com curl
+
 ```bash
-curl -X POST http://localhost:8080/usuarios/cadastro \
+curl -i -X POST http://localhost:8080/contas/cadastro \
   -H "Content-Type: application/json" \
-  -d '{"nome":"Bruna Silva","email":"bruna@email.com","senha":"123456"}'
+  -d '{
+    "responsavel": {
+      "nome": "Bruna Silva",
+      "email": "bruna@email.com",
+      "senha": "123456",
+      "senhaPainel": "1234"
+    },
+    "crianca": [
+      {
+        "nome": "Ana",
+        "idade": 10
+      }
+    ]
+  }'
 ```
 
-## 5. Estrutura de pastas
+## Acessando o banco pelo MySQL Workbench
+
+Crie uma nova conexão usando:
+
+```text
+Connection Name: Minibank Docker
+Hostname: localhost
+Port: 3308
+Username: root
+Password: mini2026
+Default Schema: minibank
 ```
+
+Depois de conectar, você pode conferir os dados cadastrados:
+
+```sql
+USE minibank;
+SELECT * FROM usuario;
+SELECT * FROM crianca;
+```
+
+Não é necessário criar o banco ou as tabelas manualmente.
+
+## Encerrando o projeto
+
+Primeiro encerre a API com `Ctrl + C`. Depois, para parar o MySQL sem apagar os dados:
+
+```bash
+docker compose down
+```
+
+Os dados permanecem no volume Docker `minibank-mysql-data` e estarão disponíveis na próxima execução.
+
+Para iniciar novamente em outro momento:
+
+```bash
+docker compose up -d
+mvn spring-boot:run
+```
+
+## Comandos úteis do Docker
+
+```bash
+docker compose ps
+docker compose logs -f mysql
+docker compose stop
+docker compose start
+docker compose down
+```
+
+> Atenção: `docker compose down -v` também remove o volume e apaga os dados do banco. Use esse comando somente quando quiser recriar o banco do zero.
+
+## Solução de problemas
+
+### A API não consegue conectar ao MySQL
+
+Confirme que o container está ativo:
+
+```bash
+docker compose ps
+```
+
+Se ele não estiver em execução:
+
+```bash
+docker compose up -d
+docker compose logs mysql
+```
+
+### A porta 3308 já está sendo usada
+
+Verifique se já existe outro container do projeto:
+
+```bash
+docker ps
+```
+
+Se necessário, altere a porta à esquerda em `docker-compose.yml` e use a mesma porta na URL de conexão em `src/main/resources/application.properties`.
+
+### A porta 8080 já está sendo usada
+
+Encerre a aplicação que está ocupando a porta ou altere `server.port` em `src/main/resources/application.properties`.
+
+## Estrutura principal
+
+```text
 src/main/java/com/minibank/
-├── controller/    endpoints da API
-├── service/       regras de negócio
-├── repository/    acesso ao banco de dados (JdbcTemplate + SQL explícito)
-├── model/         classes que representam os dados (POJOs)
-├── dto/           formatos de entrada/saída da API
-├── exception/     tratamento de erros
-└── config/        configurações (segurança, etc.)
+├── config/       configurações da aplicação e segurança
+├── controller/   endpoints da API
+├── dto/          formatos de entrada e saída da API
+├── exception/    tratamento de erros
+├── model/        classes que representam os dados
+├── repository/   acesso ao MySQL com JdbcTemplate e SQL
+└── service/      regras de negócio
+
+src/main/resources/
+├── application.properties  porta e conexão com o banco
+└── schema.sql               criação das tabelas
 ```
 
----
+## Resumo rápido dos comandos
 
-## 6. Comandos Git — subindo este projeto pro GitHub
-
-1. Crie um repositório vazio no GitHub chamado `minibank-backend` (sem README, sem .gitignore, pra não dar conflito)
-2. Dentro desta pasta, rode:
+Para quem já instalou os pré-requisitos e clonou o projeto:
 
 ```bash
-git init
-git add .
-git commit -m "Cadastro de usuário: banco MySQL, backend e validações"
-git branch -M main
-git remote add origin https://github.com/SEU_USUARIO/minibank-backend.git
-git push -u origin main
+cd minibank-backend
+docker compose up -d
+docker compose ps
+mvn spring-boot:run
 ```
 
-### Comandos do dia a dia, depois do primeiro push
-```bash
-git status                        # ver o que mudou
-git add .                         # selecionar tudo que mudou
-git commit -m "mensagem clara"    # registrar as mudanças
-git push                          # enviar pro GitHub
-git pull                          # trazer atualizações do GitHub (ex: se outra pessoa da equipe alterou algo)
-```
-
-### Trabalhando em equipe com branches (recomendado para o time)
-```bash
-git checkout -b feature/login     # cria e muda para uma nova branch
-git push -u origin feature/login  # sobe essa branch pro GitHub
-# depois, abrir um Pull Request no GitHub para revisar antes de juntar na main
-```
+Depois, teste `POST http://localhost:8080/contas/cadastro` no Postman ou com curl.
