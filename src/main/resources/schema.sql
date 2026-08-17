@@ -10,3 +10,12 @@ CREATE TABLE IF NOT EXISTS usuario (
     senha_painel_hash VARCHAR(255) NOT NULL,
     criado_em TIMESTAMP NOT NULL
     );
+
+CREATE TABLE IF NOT EXISTS crianca (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    idade INT NOT NULL,
+    usuario_id BIGINT NOT NULL,
+    criado_em TIMESTAMP NOT NULL,
+    FOREIGN KEY (usuario_id) REFERENCES usuario(id)
+    );

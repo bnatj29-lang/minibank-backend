@@ -1,32 +1,19 @@
 package com.minibank.model;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
-// Essa classe representa um registro da tabela "usuario" no banco de dados.
-// Repare que aqui NÃO tem nenhuma anotação de JPA/Hibernate (@Entity, @Table, @Id).
-// É uma classe Java "comum" (chamada de POJO). Quem sabe transformar isso em
-// linhas do banco é o UsuarioRepository, escrevendo SQL na mão com JdbcTemplate.
-//
-// Isso é mais verboso que usar Hibernate, mas deixa bem claro o que está
-// acontecendo em cada consulta, o que ajuda bastante quem está aprendendo.
-public class Usuario {
+public class Responsavel {
 
     private Long id;
     private String nome;
     private String email;
-
-    // Aqui NUNCA guardamos a senha em texto puro.
-    // Guardamos o "hash" gerado pelo BCrypt (ver UsuarioService).
     private String senhaHash;
-
     private String senhaPainelHash;
-
     private LocalDateTime criadoEm;
 
-    public Usuario() {
-    }
+    public Responsavel() {}
 
-    public Usuario(String nome, String email, String senhaHash, String senhaPainelHash) {
+    public Responsavel(String nome, String email, String senhaHash, String senhaPainelHash) {
         this.nome = nome;
         this.email = email;
         this.senhaHash = senhaHash;
@@ -34,7 +21,7 @@ public class Usuario {
         this.criadoEm = LocalDateTime.now();
     }
 
-    public Usuario(String nome, String email, String senhaHash, String senhaPainelHash, LocalDateTime criadoEm) {
+    public Responsavel(String nome, String email, String senhaHash, String senhaPainelHash, LocalDateTime criadoEm) {
         this.nome = nome;
         this.email = email;
         this.senhaHash = senhaHash;

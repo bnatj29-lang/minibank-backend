@@ -1,11 +1,11 @@
 package com.minibank.service;
 
 import com.minibank.dto.BuscarEmailRequestDTO;
-import com.minibank.dto.CadastroRequestDTO;
-import com.minibank.dto.UsuarioResponseDTO;
+import com.minibank.dto.ResponsavelRequestDTO;
+import com.minibank.dto.ResponsavelResponseDTO;
 import com.minibank.exception.EmailJaCadastradoException;
-import com.minibank.model.Usuario;
-import com.minibank.repository.UsuarioRepository;
+import com.minibank.model.Responsavel;
+import com.minibank.repository.ResponsavelRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,34 +20,34 @@ import org.springframework.stereotype.Service;
 // 3. Cria e salva o novo usuário
 // 4. Devolve um DTO de resposta, sem a senha
 @Service
-public class UsuarioService {
+public class ResponsavelService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final ResponsavelRepository responsavelRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
-        this.usuarioRepository = usuarioRepository;
+    public ResponsavelService(ResponsavelRepository responsavelRepository, PasswordEncoder passwordEncoder) {
+        this.responsavelRepository = responsavelRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UsuarioResponseDTO cadastrar(CadastroRequestDTO dto) {
+    public ResponsavelResponseDTO cadastrar(ResponsavelRequestDTO dto) {
 
-        if (usuarioRepository.existsByEmail(dto.getEmail())) {
+        if (responsavelRepository.existsByEmail(dto.getEmail())) {
             throw new EmailJaCadastradoException(dto.getEmail());
         }
 
         String senhaCriptografada = passwordEncoder.encode(dto.getSenha());
         String senhaPainelCriptografada = passwordEncoder.encode(dto.getSenhaPainel());
 
-        Usuario novoUsuario = new Usuario(dto.getNome(), dto.getEmail(), senhaCriptografada, senhaPainelCriptografada);
+        Responsavel novoResponsavel = new Responsavel(dto.getNome(), dto.getEmail(), senhaCriptografada, senhaPainelCriptografada);
 
-        Usuario usuarioSalvo = usuarioRepository.salvar(novoUsuario);
+        Responsavel responsavelSalvo = responsavelRepository.salvar(novoResponsavel);
 
-        return new UsuarioResponseDTO(usuarioSalvo);
+        return new ResponsavelResponseDTO(responsavelSalvo);
     }
 
     public String buscarPorEmail(@Valid BuscarEmailRequestDTO dto) {
-        return usuarioRepository.findByEmail(dto.getEmail());
+        return responsavelRepository.findByEmail(dto.getEmail());
     }
 }

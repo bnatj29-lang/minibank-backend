@@ -34,7 +34,7 @@ Se o projeto já tiver o Maven Wrapper (`mvnw` / `mvnw.cmd`), dá pra rodar os c
 ## 3. Como rodar
 1. Garanta que o MySQL está rodando localmente na porta padrão (3306)
 2. Ajuste usuário/senha em `src/main/resources/application.properties` se necessário (o padrão é `root`/`root`)
-3. O banco `minibank` é criado automaticamente na primeira conexão (`createDatabaseIfNotExist=true`), e a tabela `usuario` é criada pelo `schema.sql`
+3. O banco `minibank` é criado automaticamente na primeira conexão (`createDatabaseIfNotExist=true`), e a tabela `responsavel` é criada pelo `schema.sql`
 4. Rode:
 ```bash
 mvn spring-boot:run

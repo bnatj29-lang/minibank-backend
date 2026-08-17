@@ -11,7 +11,7 @@ import jakarta.validation.constraints.Size;
 // As anotações (@NotBlank, @Email, @Size) fazem o Spring validar os dados
 // AUTOMATICAMENTE antes mesmo de chegar no Controller. Se algo estiver errado,
 // ele já devolve um erro 400 explicando o que falhou.
-public class CadastroRequestDTO {
+public class ResponsavelRequestDTO {
 
     @NotBlank(message = "O nome é obrigatório")
     private String nome;
@@ -28,8 +28,7 @@ public class CadastroRequestDTO {
     @Size(min = 4, message = "A senha do painel precisa ter no mínimo 4 caracteres")
     private String senhaPainel;
 
-    public CadastroRequestDTO() {
-    }
+    public ResponsavelRequestDTO() {}
 
     public String getNome() {
         return nome;
