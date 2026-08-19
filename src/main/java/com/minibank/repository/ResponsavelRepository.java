@@ -11,6 +11,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 
 // Diferente da versão com Hibernate/JPA, aqui NÃO existe geração automática
 // de SQL. Cada metodo escreve explicitamente a query que será executada.
@@ -31,14 +33,13 @@ public class ResponsavelRepository {
         return total != null && total > 0;
     }
 
-    public String findByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
-        Integer total = jdbcTemplate.queryForObject(sql, Integer.class, email);
-        if (total > 0){
-            return "Email já cadastrado";
-        }
-        return "Email não cadastrado";
-    }
+//    public Optional<Responsavel> buscarPorEmail(String email){
+//
+//        String sql = "SELECT * FROM usuario WHERE email = ?";
+//
+//        List<Responsavel> responsaveis = jdbcTemplate.query(sql, this::mapearUsuario, email);
+//
+//    }
 
     // INSERT explícito. Usamos GeneratedKeyHolder para recuperar o "id"
     // que o MySQL gera automaticamente (AUTO_INCREMENT) após o insert.

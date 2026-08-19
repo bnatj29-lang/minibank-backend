@@ -2,7 +2,7 @@
 
 API REST do projeto **Minibank**, desenvolvida em Java 17 com Spring Boot.
 
-O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JPA. O Docker é usado para executar o banco de dados; a aplicação Spring Boot é executada localmente com Maven.
+O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JPA. A aplicação Spring Boot e o MySQL são executados localmente.
 
 ## Funcionalidade disponível
 
@@ -16,7 +16,6 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 - Spring JDBC (`JdbcTemplate`)
 - Spring Security e BCrypt
 - MySQL 8
-- Docker Compose
 
 ## Programas necessários
 
@@ -26,7 +25,7 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 | --- | --- |
 | [JDK 17](https://adoptium.net/) ou superior | Compilar e executar a aplicação Java |
 | [Maven](https://maven.apache.org/download.cgi) | Baixar as dependências e iniciar o Spring Boot |
-| [Docker Desktop](https://www.docker.com/products/docker-desktop/) | Executar o MySQL pelo Docker Compose |
+| [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) | Executar e armazenar os dados do sistema |
 | [Git](https://git-scm.com/downloads) | Clonar e versionar o projeto |
 
 > Este repositório ainda não possui Maven Wrapper (`mvnw`), portanto o Maven precisa estar instalado no computador e disponível no `PATH`.
@@ -37,7 +36,7 @@ O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JP
 | --- | --- |
 | [IntelliJ IDEA](https://www.jetbrains.com/idea/download/) | Abrir, editar e executar o projeto Java |
 | [Postman](https://www.postman.com/downloads/) | Fazer requisições e testar a API |
-| [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) | Visualizar o banco, as tabelas e os registros |
+| [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) | Administrar o MySQL e visualizar bancos, tabelas e registros |
 
 O IntelliJ, o Postman e o Workbench ajudam no desenvolvimento, mas não são necessários para iniciar o projeto pelo terminal.
 
@@ -45,13 +44,19 @@ O IntelliJ, o Postman e o Workbench ajudam no desenvolvimento, mas não são nec
 
 ### 1. Instale os programas
 
-Instale o JDK 17, Maven, Git e Docker Desktop pelos links da seção anterior. Se você já utiliza o [Homebrew](https://brew.sh/), pode instalar Java, Maven e Git pelo Terminal:
+Instale o JDK 17, Maven, Git e MySQL pelos links da seção anterior. Se você já utiliza o [Homebrew](https://brew.sh/), pode instalá-los pelo Terminal:
 
 ```bash
-brew install openjdk@17 maven git
+brew install openjdk@17 maven git mysql
 ```
 
-O Docker Desktop deve ser instalado separadamente. Depois da instalação, abra o aplicativo e aguarde até o Docker ficar disponível.
+Depois, inicie o MySQL:
+
+```bash
+brew services start mysql
+```
+
+Se o MySQL foi instalado por outro método, inicie-o pelas Preferências do Sistema ou pela ferramenta fornecida pelo instalador.
 
 ### 2. Confirme as instalações
 
@@ -60,8 +65,7 @@ Abra o Terminal e execute:
 ```bash
 java -version
 mvn -version
-docker --version
-docker compose version
+mysql --version
 git --version
 ```
 
@@ -78,15 +82,16 @@ cd minibank-backend
 
 Se o projeto já estiver no computador, use `cd` para acessar a pasta onde ele foi salvo.
 
-### 4. Inicie o banco e a API
+### 4. Configure a senha e inicie a API
 
-Com o Docker Desktop aberto, execute dentro da pasta do projeto:
+Por padrão, a aplicação tenta acessar o MySQL com usuário `root`, senha `root` e porta `3306`. Se a senha do seu MySQL for diferente, informe-a antes de iniciar a aplicação:
 
 ```bash
-docker compose up -d
-docker compose ps
+export DB_PASSWORD=SUA_SENHA_DO_MYSQL
 mvn spring-boot:run
 ```
+
+Se sua senha já for `root`, execute apenas `mvn spring-boot:run`.
 
 Mantenha esse terminal aberto enquanto usar a API. Para encerrar a aplicação, pressione `Control + C`.
 
@@ -99,11 +104,11 @@ Instale pelos links da seção **Programas necessários**:
 1. JDK 17 ou superior.
 2. Maven.
 3. Git.
-4. Docker Desktop.
+4. MySQL Community Server.
 
-Durante a instalação, permita que Java, Maven e Git sejam adicionados ao `PATH`. O Docker Desktop pode solicitar a instalação ou atualização do WSL 2; nesse caso, siga as instruções exibidas pelo instalador e reinicie o computador quando solicitado.
+Durante a instalação, permita que Java, Maven, Git e MySQL sejam adicionados ao `PATH`. No instalador do MySQL, defina uma senha para o usuário `root` e mantenha a porta padrão `3306`.
 
-Depois, abra o Docker Desktop e aguarde até o Docker ficar disponível.
+Depois, abra o aplicativo **Services** do Windows e confirme que o serviço `MySQL80` está em execução. O nome pode variar conforme a versão instalada.
 
 ### 2. Confirme as instalações
 
@@ -112,8 +117,7 @@ Abra o **PowerShell** e execute:
 ```powershell
 java -version
 mvn -version
-docker --version
-docker compose version
+mysql --version
 git --version
 ```
 
@@ -132,38 +136,38 @@ Se o projeto já estiver no computador, use `cd` para acessar a pasta. Exemplo:
 cd C:\Users\SEU_USUARIO\Downloads\minibank-backend
 ```
 
-### 4. Inicie o banco e a API
+### 4. Configure a senha e inicie a API
 
-Com o Docker Desktop aberto, execute dentro da pasta do projeto:
+Por padrão, a aplicação tenta acessar o MySQL com usuário `root`, senha `root` e porta `3306`. Se a senha definida na instalação for diferente, execute dentro da pasta do projeto:
 
 ```powershell
-docker compose up -d
-docker compose ps
+$env:DB_PASSWORD="SUA_SENHA_DO_MYSQL"
 mvn spring-boot:run
 ```
 
+Se sua senha já for `root`, execute apenas `mvn spring-boot:run`.
+
 Mantenha esse PowerShell aberto enquanto usar a API. Para encerrar a aplicação, pressione `Ctrl + C`.
 
-## O que acontece durante a inicialização
+## Configuração do banco de dados
 
-O comando `docker compose up -d` cria e inicia o container do MySQL com estas configurações:
+A aplicação utiliza estas configurações por padrão:
 
 | Configuração | Valor |
 | --- | --- |
-| Container | `minibank-mysql` |
 | Host | `localhost` |
-| Porta no computador | `3308` |
+| Porta | `3306` |
 | Banco | `minibank` |
 | Usuário | `root` |
-| Senha | `mini2026` |
+| Senha | `root` |
 
-O MySQL pode levar alguns segundos para ficar pronto na primeira execução. No macOS ou Windows, acompanhe a inicialização com:
+É possível substituir os valores sem editar o código usando as variáveis:
 
-```bash
-docker compose logs -f mysql
+```text
+DB_URL
+DB_USERNAME
+DB_PASSWORD
 ```
-
-Quando aparecer a mensagem de que o servidor está pronto para conexões, pressione `Ctrl + C` para sair dos logs. Isso não encerra o container.
 
 Quando a inicialização terminar, a API estará disponível em:
 
@@ -255,11 +259,11 @@ curl.exe -i -X POST http://localhost:8080/contas/cadastro `
 Crie uma nova conexão usando:
 
 ```text
-Connection Name: Minibank Docker
+Connection Name: Minibank Local
 Hostname: localhost
-Port: 3308
+Port: 3306
 Username: root
-Password: mini2026
+Password: a senha definida na instalação do MySQL
 Default Schema: minibank
 ```
 
@@ -275,59 +279,45 @@ Não é necessário criar o banco ou as tabelas manualmente.
 
 ## Encerrando o projeto
 
-Primeiro encerre a API com `Ctrl + C`. Depois, para parar o MySQL sem apagar os dados:
+Encerre a API pressionando `Ctrl + C` no terminal em que o Maven está rodando.
+
+O MySQL pode permanecer ativo como um serviço do computador. Caso queira encerrá-lo no macOS e tenha feito a instalação pelo Homebrew:
 
 ```bash
-docker compose down
+brew services stop mysql
 ```
 
-Os dados permanecem no volume Docker `minibank-mysql-data` e estarão disponíveis na próxima execução.
-
-Para iniciar novamente em outro momento:
+Para iniciá-lo novamente:
 
 ```bash
-docker compose up -d
-mvn spring-boot:run
+brew services start mysql
 ```
 
-## Comandos úteis do Docker
-
-```bash
-docker compose ps
-docker compose logs -f mysql
-docker compose stop
-docker compose start
-docker compose down
-```
-
-> Atenção: `docker compose down -v` também remove o volume e apaga os dados do banco. Use esse comando somente quando quiser recriar o banco do zero.
+No Windows, o serviço do MySQL pode ser iniciado ou interrompido pelo aplicativo **Services**. Parar o serviço não apaga os dados.
 
 ## Solução de problemas
 
 ### A API não consegue conectar ao MySQL
 
-Confirme que o container está ativo:
+Confira se o MySQL está em execução e se a porta, o usuário e a senha estão corretos.
+
+No macOS com Homebrew:
 
 ```bash
-docker compose ps
+brew services list
 ```
 
-Se ele não estiver em execução:
+No Windows com PowerShell:
 
-```bash
-docker compose up -d
-docker compose logs mysql
+```powershell
+Get-Service *mysql*
 ```
 
-### A porta 3308 já está sendo usada
+Se a senha do usuário `root` não for `root`, defina `DB_PASSWORD` antes de executar o Maven. Se também precisar alterar o usuário ou a URL, utilize `DB_USERNAME` e `DB_URL`.
 
-Verifique se já existe outro container do projeto:
+### A porta 3306 está diferente
 
-```bash
-docker ps
-```
-
-Se necessário, altere a porta à esquerda em `docker-compose.yml` e use a mesma porta na URL de conexão em `src/main/resources/application.properties`.
+Se o MySQL estiver configurado em outra porta, informe a URL completa pela variável `DB_URL`. Exemplo: `jdbc:mysql://localhost:3307/minibank?useSSL=false&serverTimezone=UTC&createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true`.
 
 ### A porta 8080 já está sendo usada
 
@@ -356,8 +346,7 @@ src/main/resources/
 
 ```bash
 cd minibank-backend
-docker compose up -d
-docker compose ps
+export DB_PASSWORD=SUA_SENHA_DO_MYSQL
 mvn spring-boot:run
 ```
 
@@ -365,9 +354,274 @@ mvn spring-boot:run
 
 ```powershell
 cd minibank-backend
-docker compose up -d
-docker compose ps
+$env:DB_PASSWORD="SUA_SENHA_DO_MYSQL"
 mvn spring-boot:run
 ```
 
 Depois, teste `POST http://localhost:8080/contas/cadastro` no Postman ou com o comando curl correspondente ao seu sistema.
+
+## Exemplo: o que é necessário para criar uma API
+
+Uma API normalmente é separada em camadas. Cada camada tem uma responsabilidade específica, o que deixa o código mais organizado e fácil de manter.
+
+Neste exemplo, criaremos uma API simplificada para cadastrar uma conta de usuário:
+
+> Este é um exemplo didático e resumido. O endpoint `/usuarios` mostrado abaixo não faz parte da implementação atual do Minibank; o cadastro real do projeto utiliza `POST /contas/cadastro`.
+
+```text
+POST /usuarios
+        │
+        ▼
+Controller → DTO → Service → Model → Repository → Banco de dados
+```
+
+O fluxo funciona assim:
+
+1. O cliente, como Postman ou frontend, envia uma requisição HTTP.
+2. O **Controller** recebe a requisição.
+3. O **DTO** representa e valida os dados recebidos.
+4. O **Service** executa as regras de negócio.
+5. O **Model** representa o objeto utilizado pela aplicação.
+6. O **Repository** executa o SQL.
+7. O **banco de dados** armazena as informações.
+
+### 1. Banco de dados
+
+O banco é responsável por armazenar os dados permanentemente. Primeiro, precisamos de uma tabela:
+
+```sql
+CREATE TABLE IF NOT EXISTS usuario (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    senha_hash VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP NOT NULL
+);
+```
+
+Neste projeto, as tabelas ficam no arquivo `src/main/resources/schema.sql`. O Spring executa esse arquivo automaticamente ao iniciar a aplicação.
+
+### 2. DTO
+
+DTO significa **Data Transfer Object**. Ele define o formato dos dados que entram ou saem da API.
+
+Exemplo de DTO de entrada:
+
+```java
+public class UsuarioRequestDTO {
+
+    @NotBlank
+    private String nome;
+
+    @NotBlank
+    @Email
+    private String email;
+
+    @NotBlank
+    @Size(min = 6)
+    private String senha;
+
+    // getters e setters
+}
+```
+
+Esse DTO informa que a requisição deve possuir `nome`, `email` e `senha`. As anotações também validam os dados antes de executar o cadastro.
+
+Também podemos criar um DTO de resposta para impedir que informações sensíveis sejam devolvidas:
+
+```java
+public class UsuarioResponseDTO {
+
+    private String nome;
+    private String email;
+
+    // construtor, getters e setters
+}
+```
+
+A senha não aparece no DTO de resposta porque nunca deve ser enviada de volta ao cliente.
+
+### 3. Model
+
+O Model representa uma informação do sistema dentro da aplicação:
+
+```java
+public class Usuario {
+
+    private Long id;
+    private String nome;
+    private String email;
+    private String senhaHash;
+    private LocalDateTime criadoEm;
+
+    // construtor, getters e setters
+}
+```
+
+Enquanto o DTO representa os dados da requisição ou resposta, o Model representa o usuário completo utilizado internamente pelo sistema.
+
+### 4. Repository
+
+O Repository é responsável pela comunicação com o banco de dados. Nele ficam os comandos SQL:
+
+```java
+@Repository
+public class UsuarioRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public UsuarioRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    public void salvar(Usuario usuario) {
+        String sql = """
+            INSERT INTO usuario (nome, email, senha_hash, criado_em)
+            VALUES (?, ?, ?, ?)
+            """;
+
+        jdbcTemplate.update(
+            sql,
+            usuario.getNome(),
+            usuario.getEmail(),
+            usuario.getSenhaHash(),
+            usuario.getCriadoEm()
+        );
+    }
+
+    public boolean emailJaExiste(String email) {
+        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
+        Integer quantidade = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return quantidade != null && quantidade > 0;
+    }
+}
+```
+
+O Repository não deve decidir se um cadastro pode ou não ser realizado. Ele apenas consulta, salva, altera ou remove dados.
+
+### 5. Service
+
+O Service contém as regras de negócio. Nesse exemplo, ele verifica se o e-mail já existe e criptografa a senha:
+
+```java
+@Service
+public class UsuarioService {
+
+    private final UsuarioRepository repository;
+    private final PasswordEncoder passwordEncoder;
+
+    public UsuarioService(
+        UsuarioRepository repository,
+        PasswordEncoder passwordEncoder
+    ) {
+        this.repository = repository;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    public UsuarioResponseDTO cadastrar(UsuarioRequestDTO dto) {
+        if (repository.emailJaExiste(dto.getEmail())) {
+            throw new IllegalArgumentException("E-mail já cadastrado");
+        }
+
+        Usuario usuario = new Usuario(
+            null,
+            dto.getNome(),
+            dto.getEmail(),
+            passwordEncoder.encode(dto.getSenha()),
+            LocalDateTime.now()
+        );
+
+        repository.salvar(usuario);
+
+        return new UsuarioResponseDTO(
+            usuario.getNome(),
+            usuario.getEmail()
+        );
+    }
+}
+```
+
+Exemplos de regras que normalmente ficam no Service:
+
+- Verificar se um e-mail já foi cadastrado.
+- Criptografar uma senha.
+- Calcular um valor.
+- Conferir saldo antes de uma transferência.
+- Chamar mais de um Repository na mesma operação.
+
+### 6. Controller
+
+O Controller disponibiliza o endpoint HTTP e encaminha os dados para o Service:
+
+```java
+@RestController
+@RequestMapping("/usuarios")
+public class UsuarioController {
+
+    private final UsuarioService service;
+
+    public UsuarioController(UsuarioService service) {
+        this.service = service;
+    }
+
+    @PostMapping
+    public ResponseEntity<UsuarioResponseDTO> cadastrar(
+        @Valid @RequestBody UsuarioRequestDTO dto
+    ) {
+        UsuarioResponseDTO resposta = service.cadastrar(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
+    }
+}
+```
+
+As principais anotações são:
+
+- `@RestController`: informa que a classe possui endpoints REST.
+- `@RequestMapping("/usuarios")`: define o início da URL.
+- `@PostMapping`: define que o endpoint recebe requisições `POST`.
+- `@RequestBody`: transforma o JSON recebido em um objeto Java.
+- `@Valid`: executa as validações definidas no DTO.
+
+### 7. Exemplo de requisição
+
+Depois de iniciar o banco e a aplicação, o cliente enviaria:
+
+```http
+POST http://localhost:8080/usuarios
+Content-Type: application/json
+```
+
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com",
+  "senha": "123456"
+}
+```
+
+Uma resposta possível seria:
+
+```http
+HTTP/1.1 201 Created
+Content-Type: application/json
+```
+
+```json
+{
+  "nome": "Maria Silva",
+  "email": "maria@email.com"
+}
+```
+
+### Resumo da responsabilidade de cada camada
+
+| Camada | Responsabilidade | Não deve fazer |
+| --- | --- | --- |
+| Controller | Receber requisições e devolver respostas HTTP | Escrever SQL ou concentrar regras de negócio |
+| DTO | Definir e validar dados de entrada e saída | Acessar o banco de dados |
+| Service | Executar regras de negócio e organizar a operação | Tratar detalhes de HTTP |
+| Model | Representar os dados utilizados pelo sistema | Receber diretamente todas as responsabilidades |
+| Repository | Consultar e modificar dados no banco | Decidir regras de negócio |
+| Banco de dados | Armazenar os dados permanentemente | Tratar requisições HTTP |
+
+Essa separação permite alterar uma camada com menos impacto nas demais. Por exemplo, é possível mudar a forma de salvar os dados no Repository sem alterar o endpoint definido no Controller.
