@@ -1,4 +1,6 @@
 package com.minibank.repository;
+import java.util.Optional;
+import java.util.List;
 
 import com.minibank.model.Responsavel;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -59,6 +61,20 @@ public class ResponsavelRepository {
         Long idGerado = keyHolder.getKey().longValue();
         responsavel.setId(idGerado);
         return responsavel;
+    }
+
+
+    public Optional<Responsavel> buscarPorEmail(String email) {
+
+        // Consulta para buscar um usuário pelo e-mail
+        String sql = "SELECT * FROM usuario WHERE email = ?";
+
+        // Executa a consulta e transforma os dados encontrados em Responsavel
+        List<Responsavel> resultado = jdbcTemplate.query(sql, this::mapearUsuario, email);
+
+
+        // Retorna o primeiro responsável encontrado ou vazio caso não exista
+        return resultado.stream().findFirst();
     }
 
     // Transforma uma linha do ResultSet (retorno "cru" do banco) em um objeto Usuario.
