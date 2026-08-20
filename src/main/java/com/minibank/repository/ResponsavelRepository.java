@@ -35,14 +35,6 @@ public class ResponsavelRepository {
         return total != null && total > 0;
     }
 
-//    public Optional<Responsavel> buscarPorEmail(String email){
-//
-//        String sql = "SELECT * FROM usuario WHERE email = ?";
-//
-//        List<Responsavel> responsaveis = jdbcTemplate.query(sql, this::mapearUsuario, email);
-//
-//    }
-
     // INSERT explícito. Usamos GeneratedKeyHolder para recuperar o "id"
     // que o MySQL gera automaticamente (AUTO_INCREMENT) após o insert.
     public Responsavel salvar(Responsavel responsavel) {

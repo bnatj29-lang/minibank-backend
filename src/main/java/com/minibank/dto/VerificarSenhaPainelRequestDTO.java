@@ -7,6 +7,9 @@ public class VerificarSenhaPainelRequestDTO {
     @NotBlank(message = "A senha do painel é obrigatória")
     private String senha;
 
+    @NotBlank(message = "A senha do painel é obrigatória")
+    private String email;
+
     public VerificarSenhaPainelRequestDTO() {
     }
 
@@ -20,6 +23,15 @@ public class VerificarSenhaPainelRequestDTO {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 
