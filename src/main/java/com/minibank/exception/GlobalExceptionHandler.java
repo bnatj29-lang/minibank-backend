@@ -1,6 +1,5 @@
 package com.minibank.exception;
 
-import com.minibank.exception.SenhaPainelIncorretaException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,8 +28,8 @@ public class GlobalExceptionHandler {
 
 
     // Erro 401 (Unauthorized): senha do painel incorreta
-    @ExceptionHandler(SenhaPainelIncorretaException.class)
-    public ResponseEntity<Map<String, String>> tratarSenhaPainelIncorreta(SenhaPainelIncorretaException ex) {
+    @ExceptionHandler(EmailSenhaIncorretaException.class)
+    public ResponseEntity<Map<String, String>> tratarSenhaPainelIncorreta(EmailSenhaIncorretaException ex) {
         Map<String, String> erro = new HashMap<>();
         erro.put("mensagem", ex.getMessage());
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);

@@ -1,6 +1,6 @@
 package com.minibank.service;
 
-import com.minibank.exception.SenhaPainelIncorretaException;
+import com.minibank.exception.EmailSenhaIncorretaException;
 import com.minibank.model.Responsavel;
 import com.minibank.repository.ResponsavelRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,12 +22,12 @@ public class PainelService {
     public void verificarSenhaPainel(String emailLogado, String senhaDigitada) {
         Optional<Responsavel> responsavelOpt = responsavelRepository.buscarPorEmail(emailLogado);
 
-        Responsavel responsavel = responsavelOpt.orElseThrow(SenhaPainelIncorretaException::new);
+        Responsavel responsavel = responsavelOpt.orElseThrow(() -> new EmailSenhaIncorretaException("E-mail ou senha inválidos"));
 
         boolean senhaCorreta = passwordEncoder.matches(senhaDigitada, responsavel.getSenhaPainelHash());
 
         if (!senhaCorreta) {
-            throw new SenhaPainelIncorretaException();
+            throw new EmailSenhaIncorretaException("Senha do painel de pais está incorreta!");
         }
     }
 }

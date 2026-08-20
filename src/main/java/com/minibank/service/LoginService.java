@@ -1,6 +1,7 @@
 package com.minibank.service;
 
 import com.minibank.dto.LoginRequestDTO;
+import com.minibank.exception.EmailSenhaIncorretaException;
 import com.minibank.model.Responsavel;
 import com.minibank.repository.ResponsavelRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,8 +25,12 @@ public class LoginService {
 
         Responsavel responsavel = responsavelRepository
                 .buscarPorEmail(dto.getEmail())
-                .orElseThrow(() -> new RuntimeException("E-mail ou senha inválidos"));
+                .orElseThrow(() -> new EmailSenhaIncorretaException("E-mail ou senha inválidos"));
 
         boolean senhaCorreta =
                 passwordEncoder.matches(dto.getSenha(), responsavel.getSenhaHash());
+        if (!senhaCorreta) {
+            throw new EmailSenhaIncorretaException("E-mail ou senha inválidos!");
+        }
     }
+}
