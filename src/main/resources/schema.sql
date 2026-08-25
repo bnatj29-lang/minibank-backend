@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS crianca (
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
     );
 
-CREATE TABLE configuracao_mesada (
+CREATE TABLE  IF NOT EXISTS configuracao_mesada (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   crianca_id BIGINT NOT NULL,
   valor_base DECIMAL(10,2) NOT NULL,
