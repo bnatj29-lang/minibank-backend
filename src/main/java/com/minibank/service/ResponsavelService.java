@@ -46,8 +46,4 @@ public class ResponsavelService {
 
         return new ResponsavelResponseDTO(responsavelSalvo);
     }
-
-    public String buscarPorEmail(@Valid BuscarEmailRequestDTO dto) {
-        return responsavelRepository.findByEmail(dto.getEmail());
-    }
 }
