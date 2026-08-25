@@ -57,12 +57,21 @@ public class Extrato {
         this.data = data;
     }
 
-    public Extrato(Long id, Long criancaId, String tipo, BigDecimal valor, String descricao, LocalDate data){
-        this.id = id;
+    public Extrato(Long criancaId, String tipo, BigDecimal valor, String descricao, LocalDate data){
         this.criancaId = criancaId;
         this.tipo = tipo;
-        this.valor = valor;
+        this.valor = valor;  //QUANDO UMA MOVIMENTACAO ACONTECE SAO PREENCHIDOS
         this.descricao = descricao;
         this.data = data;
     }
 }
+
+//Java cria o Extrato
+//      ↓
+//id = null
+//       ↓
+//Repository envia para MySQL
+//      ↓
+//MySQL salva
+//      ↓
+//MySQL gera o ID
