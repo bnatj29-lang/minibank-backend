@@ -19,3 +19,16 @@ CREATE TABLE IF NOT EXISTS crianca (
     criado_em TIMESTAMP NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
     );
+
+CREATE TABLE configuracao_mesada (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  crianca_id BIGINT NOT NULL,
+  valor_base DECIMAL(10,2) NOT NULL,
+  nota_minima_intermediaria DECIMAL(4,2) NOT NULL,
+  nota_minima_maxima DECIMAL(4,2) NOT NULL,
+  valor_faixa_baixa DECIMAL(10,2) NOT NULL,
+  valor_faixa_intermediaria DECIMAL(10,2) NOT NULL,
+  valor_faixa_maxima DECIMAL(10,2) NOT NULL,
+
+   FOREIGN KEY (crianca_id) REFERENCES crianca(id)
+);
