@@ -19,3 +19,13 @@ CREATE TABLE IF NOT EXISTS crianca (
     criado_em TIMESTAMP NOT NULL,
     FOREIGN KEY (usuario_id) REFERENCES usuario(id)
     );
+
+ CREATE TABLE IF NOT EXISTS extrato (
+     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+     crianca_id BIGINT NOT NULL,
+     tipo VARCHAR(20) NOT NULL,
+     valor DECIMAL(10,2) NOT NULL,
+     descricao VARCHAR(255) NOT NULL,
+     data DATE NOT NULL,
+     FOREIGN KEY (crianca_id) REFERENCES crianca(id)
+ );
