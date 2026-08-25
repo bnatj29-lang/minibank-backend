@@ -1,4 +1,6 @@
 package com.minibank.repository;
+import java.util.Optional;
+import java.util.List;
 
 import com.minibank.model.Responsavel;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -11,6 +13,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.List;
+import java.util.Optional;
 
 // Diferente da versão com Hibernate/JPA, aqui NÃO existe geração automática
 // de SQL. Cada metodo escreve explicitamente a query que será executada.
@@ -29,15 +33,6 @@ public class ResponsavelRepository {
         String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
         Integer total = jdbcTemplate.queryForObject(sql, Integer.class, email);
         return total != null && total > 0;
-    }
-
-    public String findByEmail(String email) {
-        String sql = "SELECT COUNT(*) FROM usuario WHERE email = ?";
-        Integer total = jdbcTemplate.queryForObject(sql, Integer.class, email);
-        if (total > 0){
-            return "Email já cadastrado";
-        }
-        return "Email não cadastrado";
     }
 
     // INSERT explícito. Usamos GeneratedKeyHolder para recuperar o "id"
@@ -59,6 +54,20 @@ public class ResponsavelRepository {
         Long idGerado = keyHolder.getKey().longValue();
         responsavel.setId(idGerado);
         return responsavel;
+    }
+
+
+    public Optional<Responsavel> buscarPorEmail(String email) {
+
+        // Consulta para buscar um usuário pelo e-mail
+        String sql = "SELECT * FROM usuario WHERE email = ?";
+
+        // Executa a consulta e transforma os dados encontrados em Responsavel
+        List<Responsavel> resultado = jdbcTemplate.query(sql, this::mapearUsuario, email);
+
+
+        // Retorna o primeiro responsável encontrado ou vazio caso não exista
+        return resultado.stream().findFirst();
     }
 
     // Transforma uma linha do ResultSet (retorno "cru" do banco) em um objeto Usuario.

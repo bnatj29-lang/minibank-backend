@@ -26,6 +26,15 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
     }
 
+
+    // Erro 401 (Unauthorized): senha do painel incorreta
+    @ExceptionHandler(EmailSenhaIncorretaException.class)
+    public ResponseEntity<Map<String, String>> tratarSenhaPainelIncorreta(EmailSenhaIncorretaException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+    }
+
     // Erro 400 (Bad Request): campos inválidos no formulário (@NotBlank, @Email, @Size)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> tratarCamposInvalidos(MethodArgumentNotValidException ex) {
