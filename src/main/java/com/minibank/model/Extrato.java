@@ -3,17 +3,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Extrato {
-    private Long id;
+    private Long id;    //private pq somente a propria classe pode usar.
     private Long criancaId;
     private String tipo;
-    private BigDecimal valor;
+    private BigDecimal valor;  //valor da movimentacao, nao existe saldo fixo
     private String descricao;
     private LocalDate data;
 
-    public Long getId() {
-        return id; //DEVOLVE O VALOR GUARDADO NO ATRIBUTO ID PARA A CLASSE PEDINDO
-    }
+    //GETTERS AND SETTERS
 
+    public Long getId() {
+        return id; //DEVOLVE O VALOR GUARDADO NO ATRIBUTO ID PARA A CLASSE QUE ESTA PEDINDO
+    }
     public void setId(Long id) {
         this.id = id;
     } //this.id É O ATRIBUTO DA CLASSE e id É O PARAMETRO RECEBIDO PELO METODO
@@ -63,6 +64,9 @@ public class Extrato {
         this.valor = valor;  //QUANDO UMA MOVIMENTACAO ACONTECE SAO PREENCHIDOS
         this.descricao = descricao;
         this.data = data;
+    }
+
+    public Extrato() {
     }
 }
 
