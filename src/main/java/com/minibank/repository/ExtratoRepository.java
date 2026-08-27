@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Repository; //primeiro: conectar o repository ao banco
 
 @Repository //NOTA QUE DIZ QUE ESSA CLASSE É UM REPOSITORY (spring)
+
 public class ExtratoRepository {
 
     private final JdbcTemplate jdbcTemplate;
@@ -22,6 +23,7 @@ public class ExtratoRepository {
     public void salvar(Extrato extrato){
 
         //funcao que executa alteracao no banco
+        //preenche
         jdbcTemplate.update(
                 "INSERT INTO extrato (crianca_id, tipo, valor, descricao, data) VALUES (?, ?, ?, ?, ?)",
                 extrato.getCriancaId(),
@@ -33,11 +35,11 @@ public class ExtratoRepository {
     }
 
     // A FUNCAO BUSCARPORCRIANCA TRABALHA JUNTO COM "SELECT * FROM...."
-     public List<Extrato> buscarPorCrianca(Long criancaId){
+     public List<Extrato> buscarPorCrianca(Long criancaId) {
         String sql = "SELECT * FROM extrato WHERE crianca_id = ?";
         //funcao que consulta  -- parametros
 
-         //rowMapper é uma funcao que pega o que vem do mysql e transforma em objeto Extrato (linhas)
+         //RowMapper é a função que pega cada linha retornada pelo MySQL e transforma essa linha em um objeto Extrato.
          return jdbcTemplate.query(
                   sql, //1. qual consulta executar
                  (rs, rowNum) ->  {
