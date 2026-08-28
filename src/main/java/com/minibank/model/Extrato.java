@@ -3,17 +3,18 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Extrato {
-    private Long id;
+    private Long id;    //private pq somente a propria classe pode usar.
     private Long criancaId;
     private String tipo;
-    private BigDecimal valor;
+    private BigDecimal valor;  //valor da movimentacao, nao existe saldo fixo
     private String descricao;
     private LocalDate data;
 
-    public Long getId() {
-        return id; //DEVOLVE O VALOR GUARDADO NO ATRIBUTO ID PARA A CLASSE PEDINDO
-    }
+    //GETTERS AND SETTERS
 
+    public Long getId() {
+        return id; //DEVOLVE O VALOR GUARDADO NO ATRIBUTO ID PARA A CLASSE QUE ESTA PEDINDO
+    }
     public void setId(Long id) {
         this.id = id;
     } //this.id É O ATRIBUTO DA CLASSE e id É O PARAMETRO RECEBIDO PELO METODO
@@ -57,12 +58,22 @@ public class Extrato {
         this.data = data;
     }
 
+    //ESSE CONSTRUTOR PERMITE CRIAR UM EXTRATO JA COM OS DADOS PREENCHIDOS
+    //atributos e parametros
     public Extrato(Long criancaId, String tipo, BigDecimal valor, String descricao, LocalDate data){
         this.criancaId = criancaId;
         this.tipo = tipo;
         this.valor = valor;  //QUANDO UMA MOVIMENTACAO ACONTECE SAO PREENCHIDOS
         this.descricao = descricao;
         this.data = data;
+
+        //todos os atributos (this.algo) recebem o parametro
+        //o id nao ta aqui pq quem vai gerar o id é o mysql pelo auto_increment.
+    }
+
+    public Extrato() {
+        //Extrato extrato = new Extrato(); (OBJETIVO DA CLASSE)
+        //construtor sem parametros - permite criar objetos "Extrato" vazios e dps preencher usando setters.
     }
 }
 
