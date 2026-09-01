@@ -34,7 +34,7 @@ public class ExtratoController {
         //passa para ele o dto recebido
     }
 
-  @GetMapping("/extrato{criancaId}") //consulta o extrato
+  @GetMapping("/extrato/{criancaId}") //consulta o extrato
     public List<Extrato> consultar(@PathVariable Long criancaId){
         return extratoService.consultar(criancaId);
   }
