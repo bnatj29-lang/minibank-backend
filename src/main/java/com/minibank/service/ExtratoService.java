@@ -4,6 +4,8 @@ import com.minibank.model.Extrato;
 import org.springframework.stereotype.Service;
 import com.minibank.repository.ExtratoRepository;
 import java.time.LocalDate;
+import java.util.List;
+import java.math.BigDecimal;
 
 @Service //logica/regras da aplicacao
 public class ExtratoService {
@@ -23,6 +25,7 @@ public class ExtratoService {
     //recebe objeto dto contendo os dados enviados pelo front
   public void registrar(RegistrarExtratoRequestDTO request){
       Extrato extrato = new Extrato();
+
       extrato.setCriancaId(request.getCriancaId());
       //Pegamos o criancaId que está dentro do DTO e colocamos dentro do objeto Extrato.
       extrato.setTipo(request.getTipo()); //(pegamos o tipo entrada/retirada)
@@ -32,5 +35,25 @@ public class ExtratoService {
 
       // O Repository é quem vai executar o INSERT no MySQL.
       extratoRepository.salvar(extrato);
+  }
+
+  public List<Extrato> consultar(Long criancaId){
+      return extratoRepository.buscarPorCrianca(criancaId);
+  }
+
+  //METODO DE CALCULO
+  public BigDecimal calcularSaldo(Long criancaId){
+      List<Extrato> extratos = extratoRepository.buscarPorCrianca(criancaId);
+
+      BigDecimal saldo = BigDecimal.ZERO;
+
+      for(Extrato extrato : extratos){
+          if(extrato.getTipo().equals("ENTRADA")) {
+              saldo = saldo.add(extrato.getValor());
+          } else if(extrato.getTipo().equals("RETIRADA")){
+              saldo = saldo.subtract(extrato.getValor());
+          }
+      }
+      return saldo; //saldo é um resultado temporario calculado a partir dos valores
   }
 }
