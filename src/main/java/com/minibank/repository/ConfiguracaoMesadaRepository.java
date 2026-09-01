@@ -4,7 +4,8 @@ import com.minibank.model.ConfiguracaoMesada;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class ConfiguracaoMesadaRepository {
@@ -43,24 +44,27 @@ public class ConfiguracaoMesadaRepository {
         );
     }
 
-    public ConfiguracaoMesada buscarCrianca(Long criancaId) {
+    public Optional<ConfiguracaoMesada> buscarCrianca(Long criancaId) {
 
         String sql = "SELECT * FROM configuracao_mesada WHERE crianca_id = ?";
 
-        return jdbcTemplate.queryForObject(
-                sql,
-                (rs, rowNum) -> new ConfiguracaoMesada(
-                        rs.getLong("id"),
-                        rs.getLong("crianca_id"),
-                        rs.getBigDecimal("valor_base"),
-                        rs.getBigDecimal("nota_minima_intermediaria"),
-                        rs.getBigDecimal("nota_minima_maxima"),
-                        rs.getBigDecimal("valor_faixa_baixa"),
-                        rs.getBigDecimal("valor_faixa_intermediaria"),
-                        rs.getBigDecimal("valor_faixa_maxima")
-                ),
-                criancaId
-        );
+        List<ConfiguracaoMesada> resultado =
+                jdbcTemplate.query(
+                        sql,
+                        (rs, rowNum) -> new ConfiguracaoMesada(
+                                rs.getLong("id"),
+                                rs.getLong("crianca_id"),
+                                rs.getBigDecimal("valor_base"),
+                                rs.getBigDecimal("nota_minima_intermediaria"),
+                                rs.getBigDecimal("nota_minima_maxima"),
+                                rs.getBigDecimal("valor_faixa_baixa"),
+                                rs.getBigDecimal("valor_faixa_intermediaria"),
+                                rs.getBigDecimal("valor_faixa_maxima")
+                        ),
+                        criancaId
+                );
+
+        return resultado.stream().findFirst();
     }
 
     public void atualizar(ConfiguracaoMesada configuracao) {
