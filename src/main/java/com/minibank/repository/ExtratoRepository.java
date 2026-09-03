@@ -3,6 +3,7 @@ import com.minibank.model.Extrato; //repository: recebe e devolve objetos Extrat
 import org.springframework.jdbc.core.JdbcTemplate;
 import java.util.List;
 import org.springframework.stereotype.Repository; //primeiro: conectar o repository ao banco
+import java.math.BigDecimal;
 
 @Repository //NOTA QUE DIZ QUE ESSA CLASSE É UM REPOSITORY (spring)
 

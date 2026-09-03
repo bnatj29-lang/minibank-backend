@@ -13,3 +13,4 @@ public class MinibankApplication {
         SpringApplication.run(MinibankApplication.class, args);
     }
 }
+
