@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.jdbc.core.RowMapper;
 import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public class MissaoRepository {
 
     private final JdbcTemplate jdbcTemplate;
