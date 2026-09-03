@@ -16,6 +16,10 @@ public class ConfiguracaoMesadaService {
         this.repository = repository;
     }
 
+    public Optional<ConfiguracaoMesada> buscar(Long criancaId) {
+        return repository.buscarCrianca(criancaId);
+    }
+
     public void configurar(Long criancaId, ConfiguracaoMesadaRequestDTO dto) {
 
         ConfiguracaoMesada configuracao = new ConfiguracaoMesada();
