@@ -81,6 +81,13 @@ public class MissaoController {
         return missaoService.calcularMesada(criancaId);
     }
 
+    @PostMapping("/{criancaId}/mesada/registrar")
+    public BigDecimal registrarMesada(
+            @PathVariable Long criancaId) {
+
+        return missaoService.registrarMesada(criancaId);
+    }
+
 
 
 

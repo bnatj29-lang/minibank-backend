@@ -1,38 +1,46 @@
 package com.minibank.service;
+
+import com.minibank.dto.RegistrarExtratoRequestDTO;
 import com.minibank.exception.NotaMissaoInvalidaException;
+import com.minibank.model.ConfiguracaoMesada;
 import com.minibank.model.Missao;
 import com.minibank.repository.ConfiguracaoMesadaRepository;
 import com.minibank.repository.MissaoRepository;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import com.minibank.model.ConfiguracaoMesada;
 import java.util.Optional;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class MissaoService {
 
     private final MissaoRepository missaoRepository;
     private final ConfiguracaoMesadaRepository configuracaoMesadaRepository;
+    private final ExtratoService extratoService;
 
     public MissaoService(
             MissaoRepository missaoRepository,
-            ConfiguracaoMesadaRepository configuracaoMesadaRepository) {
+            ConfiguracaoMesadaRepository configuracaoMesadaRepository,
+            ExtratoService extratoService) {
 
         this.missaoRepository = missaoRepository;
         this.configuracaoMesadaRepository = configuracaoMesadaRepository;
+        this.extratoService = extratoService;
     }
 
     public void criarMissao(Long criancaId, String criterio, BigDecimal nota) {
 
         if (nota.compareTo(BigDecimal.ZERO) < 0) {
-            throw new NotaMissaoInvalidaException("A nota deve estar entre 0 e 10.");
+            throw new NotaMissaoInvalidaException(
+                    "A nota deve estar entre 0 e 10."
+            );
         }
 
         if (nota.compareTo(BigDecimal.TEN) > 0) {
-            throw new NotaMissaoInvalidaException("A nota deve estar entre 0 e 10.");
+            throw new NotaMissaoInvalidaException(
+                    "A nota deve estar entre 0 e 10."
+            );
         }
 
         missaoRepository.salvar(criancaId, criterio, nota);
@@ -40,7 +48,9 @@ public class MissaoService {
 
     public BigDecimal calcularMedia(Long criancaId) {
 
-        List<Missao> missoes = missaoRepository.listarPorCrianca(criancaId);
+        List<Missao> missoes =
+                missaoRepository.listarPorCrianca(criancaId);
+
         BigDecimal soma = BigDecimal.ZERO;
 
         if (missoes.isEmpty()) {
@@ -68,16 +78,22 @@ public class MissaoService {
                 configuracaoMesadaRepository.buscarCrianca(criancaId);
 
         if (resultado.isEmpty()) {
-            throw new RuntimeException("Configuração de mesada não encontrada para a criança.");
+            throw new RuntimeException(
+                    "Configuração de mesada não encontrada para a criança."
+            );
         }
 
         ConfiguracaoMesada configuracao = resultado.get();
 
-        if (media.compareTo(configuracao.getNotaMinimaMaxima()) >= 0) {
+        if (media.compareTo(
+                configuracao.getNotaMinimaMaxima()) >= 0) {
+
             return configuracao.getValorFaixaMaxima();
         }
 
-        if (media.compareTo(configuracao.getNotaMinimaIntermediaria()) >= 0) {
+        if (media.compareTo(
+                configuracao.getNotaMinimaIntermediaria()) >= 0) {
+
             return configuracao.getValorFaixaIntermediaria();
         }
 
@@ -88,14 +104,14 @@ public class MissaoService {
         return missaoRepository.listarPorCrianca(criancaId);
     }
 
-
-
-
     public Optional<Missao> buscarMissaoPorId(Long id) {
         return missaoRepository.buscarPorId(id);
     }
 
-    public void atualizarMissao(Long id, String criterio, BigDecimal nota) {
+    public void atualizarMissao(
+            Long id,
+            String criterio,
+            BigDecimal nota) {
 
         if (nota.compareTo(BigDecimal.ZERO) < 0 ||
                 nota.compareTo(BigDecimal.TEN) > 0) {
@@ -110,5 +126,22 @@ public class MissaoService {
 
     public void excluirMissao(Long id) {
         missaoRepository.excluir(id);
+    }
+
+    public BigDecimal registrarMesada(Long criancaId) {
+
+        BigDecimal mesada = calcularMesada(criancaId);
+
+        RegistrarExtratoRequestDTO request =
+                new RegistrarExtratoRequestDTO();
+
+        request.setCriancaId(criancaId);
+        request.setTipo("ENTRADA");
+        request.setValor(mesada);
+        request.setDescricao("Mesada calculada pelas missões");
+
+        extratoService.registrar(request);
+
+        return mesada;
     }
 }
