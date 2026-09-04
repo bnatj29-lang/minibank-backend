@@ -44,4 +44,45 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
     }
+
+    @ExceptionHandler(SaldoInsuficienteException.class)
+    public ResponseEntity<Map<String, String>> tratarSaldoInsuficiente(
+            SaldoInsuficienteException ex) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(erro);
+    }
+
+    // Erro 400 (Bad Request): valor da movimentação inválido
+    @ExceptionHandler(ValorMovimentacaoInvalidoException.class)
+    public ResponseEntity<Map<String, String>> tratarValorInvalido(
+            ValorMovimentacaoInvalidoException ex) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erro);
+    }
+
+
+    // Erro 400 (Bad Request): tipo de movimentação inválido
+    @ExceptionHandler(TipoMovimentacaoInvalidoException.class)
+    public ResponseEntity<Map<String, String>> tratarTipoInvalido(
+            TipoMovimentacaoInvalidoException ex) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erro);
+    }
+
+
 }
