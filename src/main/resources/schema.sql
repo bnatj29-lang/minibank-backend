@@ -42,3 +42,11 @@ CREATE TABLE  IF NOT EXISTS configuracao_mesada (
      data DATE NOT NULL,
      FOREIGN KEY (crianca_id) REFERENCES crianca(id)
  );
+
+CREATE TABLE IF NOT EXISTS missao (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    crianca_id BIGINT NOT NULL,
+    criterio VARCHAR(255) NOT NULL,
+    nota DECIMAL(4,2) NOT NULL,
+    FOREIGN KEY (crianca_id) REFERENCES crianca(id)
+    );
