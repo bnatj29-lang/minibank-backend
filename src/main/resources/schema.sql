@@ -59,4 +59,4 @@ CREATE TABLE IF NOT EXISTS meta (
     valor_guardado DECIMAL(10,2) NOT NULL,
     status VARCHAR(20) NOT NULL,
     FOREIGN KEY (crianca_id) REFERENCES crianca(id)
-)
+);

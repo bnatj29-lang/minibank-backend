@@ -23,6 +23,15 @@ public class Meta {
         this.status = StatusMeta.ATIVA;
     }
 
+    public Meta(Long id, Long criancaId, String nomeMeta, BigDecimal valorMeta, BigDecimal valorGuardado, StatusMeta status) {
+        this.id = id;
+        this.criancaId = criancaId;
+        this.nomeMeta = nomeMeta;
+        this.valorMeta = valorMeta;
+        this.valorGuardado = valorGuardado;
+        this.status = status;
+    }
+
     public BigDecimal getValorMeta() {
         return valorMeta;
     }

@@ -13,6 +13,7 @@ public class ConfiguracaoMesadaRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public ConfiguracaoMesadaRepository(JdbcTemplate jdbcTemplate) {
+
         this.jdbcTemplate = jdbcTemplate;
     }
 

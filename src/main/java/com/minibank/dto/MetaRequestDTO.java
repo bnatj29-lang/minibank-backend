@@ -5,16 +5,18 @@ import java.math.BigDecimal;
 public class MetaRequestDTO {
 
     private String nomeMeta;
-    private BigDecimal valorAlvo;
+    private BigDecimal valorMeta;
 
-    public MetaRequestDTO() {}
+    public MetaRequestDTO() {
+    }
 
     public MetaRequestDTO(String nomeMeta, BigDecimal valorAlvo) {
         this.nomeMeta = nomeMeta;
-        this.valorAlvo = valorAlvo;
+        this.valorMeta = valorAlvo;
     }
 
     public String getNomeMeta() {
+
         return nomeMeta;
     }
 
@@ -22,11 +24,12 @@ public class MetaRequestDTO {
         this.nomeMeta = nomeMeta;
     }
 
-    public BigDecimal getValorAlvo() {
-        return valorAlvo;
+    public BigDecimal getValorMeta() {
+
+        return valorMeta;
     }
 
     public void setValorAlvo(BigDecimal valorAlvo) {
-        this.valorAlvo = valorAlvo;
+        this.valorMeta = valorAlvo;
     }
 }

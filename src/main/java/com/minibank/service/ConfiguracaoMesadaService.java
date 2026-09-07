@@ -13,10 +13,12 @@ public class ConfiguracaoMesadaService {
     private final ConfiguracaoMesadaRepository repository;
 
     public ConfiguracaoMesadaService(ConfiguracaoMesadaRepository repository) {
+
         this.repository = repository;
     }
 
     public Optional<ConfiguracaoMesada> buscar(Long criancaId) {
+
         return repository.buscarCrianca(criancaId);
     }
 
