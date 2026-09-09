@@ -29,4 +29,18 @@ public class MetaController {
     public List<MetaResponseDTO> listarMetas(@PathVariable Long criancaId) {
         return service.listarMetas(criancaId);
     }
+
+    @GetMapping("/{criancaId}/metas/{metaId}")
+    public MetaResponseDTO buscarMetaPorId(
+            @PathVariable Long criancaId,
+            @PathVariable Long metaId
+    ) {
+        return service.buscarMetaPorId(metaId);
+    }
+
+    @DeleteMapping("/{criancaId}/metas/{metaId}")
+    public String excluirMeta(@PathVariable Long metaId) {
+        return service.excluirMeta(metaId);
+
+    }
 }

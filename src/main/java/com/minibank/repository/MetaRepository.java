@@ -132,11 +132,16 @@ public class MetaRepository {
         );
     }
 
-    public void excluir (Long id){
-        jdbcTemplate.update(
+    public String excluir(Long id){
+        int linhasAfetadas = jdbcTemplate.update(
                 "DELETE FROM meta WHERE id = ?",
                 id
         );
+        if (linhasAfetadas == 0) {
+            return "Nenhuma meta encontrada com esse ID";
+        } else {
+            return "Meta excluída com sucesso";
+        }
     }
 
 }

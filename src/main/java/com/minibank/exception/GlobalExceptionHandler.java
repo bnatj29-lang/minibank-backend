@@ -44,4 +44,10 @@ public class GlobalExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
     }
+    @ExceptionHandler(MetaException.class)
+    public ResponseEntity<Map<String, String>> tratarMetaNaoEncontrada(MetaException ex) {
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+    }
 }
