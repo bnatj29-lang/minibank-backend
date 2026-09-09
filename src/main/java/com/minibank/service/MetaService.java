@@ -4,6 +4,7 @@ import com.minibank.dto.MetaRequestDTO;
 import com.minibank.dto.MetaResponseDTO;
 import com.minibank.exception.MetaException;
 import com.minibank.model.Meta;
+import com.minibank.model.StatusMeta;
 import com.minibank.repository.MetaRepository;
 import org.springframework.stereotype.Service;
 
@@ -98,8 +99,20 @@ public class MetaService {
 
         }
 
-    public String excluirMeta(Long id){
-      return metaRepository.excluir(id);
+    public String excluirMeta( Long criancaId, Long metaId ){
+
+        Meta meta = metaRepository.buscarMetaPorId(metaId)
+                .orElseThrow(() -> new MetaException("Meta não encontrada"));
+
+        if (!meta.getCriancaId().equals(criancaId)) {
+            throw new MetaException("Essa meta não pertence a esta criança");
+        }
+
+        if(meta.getStatus() == StatusMeta.CONQUISTADA){
+            throw new MetaException("Não é possível excluir uma meta conquistada!");
+        }
+
+      return metaRepository.excluir(metaId);
 
     }
 

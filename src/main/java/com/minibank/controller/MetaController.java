@@ -39,8 +39,10 @@ public class MetaController {
     }
 
     @DeleteMapping("/{criancaId}/metas/{metaId}")
-    public String excluirMeta(@PathVariable Long metaId) {
-        return service.excluirMeta(metaId);
+    public String excluirMeta(
+            @PathVariable Long criancaId,
+            @PathVariable Long metaId) {
+        return service.excluirMeta(criancaId, metaId);
 
     }
 }
