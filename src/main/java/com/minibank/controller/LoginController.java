@@ -1,6 +1,7 @@
 package com.minibank.controller;
 
 import com.minibank.dto.LoginRequestDTO;
+import com.minibank.dto.LoginResponseDTO;
 import com.minibank.dto.VerificarSenhaPainelRequestDTO;
 import com.minibank.service.LoginService;
 import com.minibank.service.PainelService;
@@ -30,11 +31,10 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(
+    public ResponseEntity<LoginResponseDTO> login(
             @Valid @RequestBody LoginRequestDTO request) {
 
-       loginService.login(request);
-
-        return ResponseEntity.ok().build();
+        LoginResponseDTO resposta = loginService.login(request);
+        return ResponseEntity.ok(resposta);
     }
 }

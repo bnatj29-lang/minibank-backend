@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.List;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
@@ -34,5 +35,19 @@ public class CriancaRepository {
 
         Long idGerado = keyHolder.getKey().longValue();
         crianca.setId(idGerado);
+    }
+
+    public List<Crianca> buscarPorResponsavel(Long responsavelId) {
+        String sql = "SELECT id, nome, idade, usuario_id, criado_em FROM crianca WHERE usuario_id = ? ORDER BY id";
+
+        return jdbcTemplate.query(sql, (rs, numeroLinha) -> {
+            Crianca crianca = new Crianca();
+            crianca.setId(rs.getLong("id"));
+            crianca.setNome(rs.getString("nome"));
+            crianca.setIdade(rs.getInt("idade"));
+            crianca.setResponsavelId(rs.getLong("usuario_id"));
+            crianca.setCriadoEm(rs.getTimestamp("criado_em").toLocalDateTime());
+            return crianca;
+        }, responsavelId);
     }
 }

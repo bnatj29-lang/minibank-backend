@@ -50,3 +50,13 @@ CREATE TABLE IF NOT EXISTS missao (
     nota DECIMAL(4,2) NOT NULL,
     FOREIGN KEY (crianca_id) REFERENCES crianca(id)
     );
+
+CREATE TABLE IF NOT EXISTS meta (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    crianca_id BIGINT NOT NULL,
+    nome_meta VARCHAR(255) NOT NULL,
+    valor_meta DECIMAL(10,2) NOT NULL,
+    valor_guardado DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL,
+    FOREIGN KEY (crianca_id) REFERENCES crianca(id)
+);
