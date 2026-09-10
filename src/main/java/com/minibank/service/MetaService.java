@@ -1,5 +1,6 @@
 package com.minibank.service;
 
+import com.minibank.dto.AporteMetaRequestDTO;
 import com.minibank.dto.MetaRequestDTO;
 import com.minibank.dto.MetaResponseDTO;
 import com.minibank.exception.MetaException;
@@ -17,9 +18,11 @@ import java.util.List;
 public class MetaService {
 
     private final MetaRepository metaRepository;
+    private final ExtratoService extratoService;
 
-    public MetaService(MetaRepository metaRepository) {
+    public MetaService(MetaRepository metaRepository, ExtratoService extratoService) {
         this.metaRepository = metaRepository;
+        this.extratoService = extratoService;
     }
 
     public MetaResponseDTO criarMeta(Long criancaId, MetaRequestDTO requestDTO) {
@@ -101,7 +104,7 @@ public class MetaService {
                 meta.getStatus()
         );
 
-        }
+    }
 
     public MetaResponseDTO editarMeta(
             Long criancaId,
@@ -157,7 +160,8 @@ public class MetaService {
                 meta.getStatus()
         );
     }
-    public String excluirMeta( Long criancaId, Long metaId ){
+
+    public String excluirMeta(Long criancaId, Long metaId) {
 
         Meta meta = metaRepository.buscarMetaPorId(metaId)
                 .orElseThrow(() -> new MetaException("Meta não encontrada"));
@@ -166,10 +170,75 @@ public class MetaService {
             throw new MetaException("Essa meta não pertence a esta criança");
         }
 
-        if(meta.getStatus() == StatusMeta.CONQUISTADA){
+        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
             throw new MetaException("Não é possível excluir uma meta conquistada!");
         }
 
-      return metaRepository.excluir(metaId);
+        return metaRepository.excluir(metaId);
+    }
+
+    public MetaResponseDTO guardarDinheiroMeta(
+            Long criancaId,
+            Long metaId,
+            AporteMetaRequestDTO requestDTO
+    ) {
+
+        Meta meta = metaRepository.buscarMetaPorId(metaId)
+                .orElseThrow(() -> new MetaException("Meta não encontrada"));
+
+        if (!meta.getCriancaId().equals(criancaId)) {
+            throw new MetaException("Essa meta não pertence a esta criança");
+        }
+
+        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
+            throw new MetaException("Não é possível guardar valor em uma meta conquistada!");
+        }
+
+        if (requestDTO.getValorAporte().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MetaException("O valor guardado deve ser maior que zero!");
+        }
+
+        BigDecimal saldoTotal = extratoService.calcularSaldo(criancaId);
+
+        List<Meta> metas = metaRepository.buscarMetas(criancaId);
+
+        BigDecimal valorEmMetas = BigDecimal.ZERO;
+
+        for (int i = 0; i < metas.size(); i++) {
+
+            Meta metaDaLista = metas.get(i);
+
+            if (metaDaLista.getStatus() != StatusMeta.CONQUISTADA) {
+                valorEmMetas = valorEmMetas.add(metaDaLista.getValorGuardado());
+            }
+        }
+
+        BigDecimal saldoLivre = saldoTotal.subtract(valorEmMetas);
+
+        if (requestDTO.getValorAporte().compareTo(saldoLivre) > 0) {
+            throw new MetaException("Saldo insuficiente para guardar esse valor na meta!");
+        }
+
+        BigDecimal valorRestante =
+                meta.getValorMeta().subtract(meta.getValorGuardado());
+
+        if (requestDTO.getValorAporte().compareTo(valorRestante) > 0) {
+            throw new MetaException("Não é possível guardar um valor maior que o restante da meta!");
+        }
+
+        BigDecimal novoValorGuardado =
+                meta.getValorGuardado().add(requestDTO.getValorAporte());
+
+        meta.setValorGuardado(novoValorGuardado);
+
+        if (meta.getValorGuardado().compareTo(meta.getValorMeta()) == 0) {
+            meta.setStatus(StatusMeta.ALCANÇADA);
+        } else {
+            meta.setStatus(StatusMeta.ATIVA);
+        }
+
+        metaRepository.atualizar(meta);
+
+        // ainda falta montar e retornar o MetaResponseDTO
     }
 }

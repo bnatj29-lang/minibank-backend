@@ -7,15 +7,15 @@ public class AporteMetaRequestDTO {
 
     public AporteMetaRequestDTO(){}
 
-    public AporteMetaRequestDTO(BigDecimal valor) {
-        this.valorAporte = valor;
+    public AporteMetaRequestDTO(BigDecimal valorAporte) {
+        this.valorAporte = valorAporte;
     }
 
-    public BigDecimal getValor() {
+    public BigDecimal getValorAporte() {
         return valorAporte;
     }
 
-    public void setValor(BigDecimal valor) {
-        this.valorAporte = valor;
+    public void setValorAporte(BigDecimal valorAporte) {
+        this.valorAporte = valorAporte;
     }
 }
