@@ -1,18 +1,21 @@
 package com.minibank.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.math.BigDecimal;
 
 public class MetaRequestDTO {
 
+    @NotBlank(message = "O nome da meta não pode estar vazio!")
     private String nomeMeta;
     private BigDecimal valorMeta;
 
     public MetaRequestDTO() {
     }
 
-    public MetaRequestDTO(String nomeMeta, BigDecimal valorAlvo) {
+    public MetaRequestDTO(String nomeMeta, BigDecimal valorMeta) {
         this.nomeMeta = nomeMeta;
-        this.valorMeta = valorAlvo;
+        this.valorMeta = valorMeta;
     }
 
     public String getNomeMeta() {
@@ -29,7 +32,7 @@ public class MetaRequestDTO {
         return valorMeta;
     }
 
-    public void setValorAlvo(BigDecimal valorAlvo) {
-        this.valorMeta = valorAlvo;
+    public void setValorMeta(BigDecimal valorMeta) {
+        this.valorMeta = valorMeta;
     }
 }
