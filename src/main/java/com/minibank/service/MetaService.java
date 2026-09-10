@@ -237,8 +237,7 @@ public class MetaService {
 //            meta.setStatus(StatusMeta.ATIVA);
 //        }
 //
-//        return metaRepository.atualizar(meta);
-//
+//        metaRepository.atualizar(meta);
 //
 //        // ainda falta montar e retornar o MetaResponseDTO
 //    }
