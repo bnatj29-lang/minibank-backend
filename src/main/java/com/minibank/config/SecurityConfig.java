@@ -6,6 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 // Essa classe configura duas coisas essenciais:
 //
@@ -26,8 +27,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, UrlBasedCorsConfigurationSource configuracaoCors) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(configuracaoCors))
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/usuarios/cadastro").permitAll()

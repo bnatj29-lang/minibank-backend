@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/contas")
-@CrossOrigin(origins = "*")
 
 public class CriarContaController {
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/autenticar")
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 public class LoginController {
 
     private final PainelService painelService;

@@ -40,14 +40,20 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> tratarCamposInvalidos(MethodArgumentNotValidException ex) {
         Map<String, String> erros = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(erro ->
-            erros.put(erro.getField(), erro.getDefaultMessage())
+                erros.put(erro.getField(), erro.getDefaultMessage())
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
     }
+
     @ExceptionHandler(MetaException.class)
     public ResponseEntity<Map<String, String>> tratarMetaNaoEncontrada(MetaException ex) {
         Map<String, String> erro = new HashMap<>();
         erro.put("mensagem", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+    }
+
+    @ExceptionHandler(NotaMissaoInvalidaException.class)
+    public ResponseEntity<Map<String, String>> tratarMissaoInvalida(NotaMissaoInvalidaException ex) {
+        return ResponseEntity.badRequest().body(Map.of("mensagem", ex.getMessage()));
     }
 }
