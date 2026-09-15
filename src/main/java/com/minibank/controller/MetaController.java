@@ -1,5 +1,6 @@
 package com.minibank.controller;
 
+import com.minibank.dto.AporteMetaRequestDTO;
 import com.minibank.dto.MetaRequestDTO;
 import com.minibank.dto.MetaResponseDTO;
 import com.minibank.service.MetaService;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
 @RequestMapping("/metas")
 public class MetaController {
 
@@ -41,7 +41,7 @@ public class MetaController {
         return service.buscarMetaPorId(criancaId, metaId);
     }
 
-    @PutMapping ("/{criancaId}/editar/{metaId}")
+    @PutMapping("/{criancaId}/editar/{metaId}")
     public MetaResponseDTO editarMeta(
             @PathVariable Long criancaId,
             @PathVariable Long metaId,
@@ -56,5 +56,21 @@ public class MetaController {
             @PathVariable Long metaId) {
         return service.excluirMeta(criancaId, metaId);
 
+    }
+
+    @PostMapping("/{criancaId}/metas/{metaId}/guardar")
+    public MetaResponseDTO guardarDinheiroMeta(
+            @PathVariable Long criancaId,
+            @PathVariable Long metaId,
+            @RequestBody AporteMetaRequestDTO requestDTO) {
+
+        return service.guardarDinheiroMeta(criancaId, metaId, requestDTO);
+    }
+
+    @PostMapping("/{criancaId}/metas/{metaId}/conquistar")
+    public MetaResponseDTO conquistarMeta(
+            @PathVariable Long criancaId,
+            @PathVariable Long metaId) {
+        return service.conquistarMeta(criancaId, metaId);
     }
 }
