@@ -167,4 +167,18 @@ public class MissaoService {
         return mesada;
     }
 
+    public BigDecimal buscarMesada(Long criancaId) {
+
+        Optional<ConfiguracaoMesada> resultado =
+                configuracaoMesadaRepository.buscarCrianca(criancaId);
+
+        if (resultado.isEmpty()) {
+            throw new RuntimeException(
+                    "Configuração de mesada não encontrada para a criança."
+            );
+        }
+
+        return resultado.get().getValorBase();
+    }
+
 }
