@@ -7,6 +7,9 @@ import org.springframework.jdbc.core.RowMapper;
 import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import java.sql.Statement;
 
 @Repository
 public class MissaoRepository {
@@ -18,15 +21,27 @@ public class MissaoRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void salvar(Long criancaId, String criterio, BigDecimal nota){
+    public Long salvar(Long criancaId, String criterio, BigDecimal nota) {
 
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(
-                "INSERT INTO missao (crianca_id, criterio, nota) VALUES (?,?,?)",
-                criancaId,
-                criterio,
-                nota
+                connection -> {
+                    var statement = connection.prepareStatement(
+                            "INSERT INTO missao (crianca_id, criterio, nota) VALUES (?, ?, ?)",
+                            Statement.RETURN_GENERATED_KEYS
+                    );
+
+                    statement.setLong(1, criancaId);
+                    statement.setString(2, criterio);
+                    statement.setBigDecimal(3, nota);
+
+                    return statement;
+                },
+                keyHolder
         );
+
+        return keyHolder.getKey().longValue();
     }
 
     public List<Missao> listarPorCrianca(Long criancaId) {

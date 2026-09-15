@@ -6,10 +6,12 @@ import com.minibank.model.ConfiguracaoMesada;
 import com.minibank.model.Missao;
 import com.minibank.repository.ConfiguracaoMesadaRepository;
 import com.minibank.repository.MissaoRepository;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -29,7 +31,10 @@ public class MissaoService {
         this.extratoService = extratoService;
     }
 
-    public void criarMissao(Long criancaId, String criterio, BigDecimal nota) {
+    public Missao criarMissao(
+            Long criancaId,
+            String criterio,
+            BigDecimal nota) {
 
         if (nota.compareTo(BigDecimal.ZERO) < 0) {
             throw new NotaMissaoInvalidaException(
@@ -43,7 +48,18 @@ public class MissaoService {
             );
         }
 
-        missaoRepository.salvar(criancaId, criterio, nota);
+        Long id = missaoRepository.salvar(
+                criancaId,
+                criterio,
+                nota
+        );
+
+        return new Missao(
+                id,
+                criterio,
+                criancaId,
+                nota
+        );
     }
 
     public BigDecimal calcularMedia(Long criancaId) {
@@ -121,7 +137,11 @@ public class MissaoService {
             );
         }
 
-        missaoRepository.atualizar(id, criterio, nota);
+        missaoRepository.atualizar(
+                id,
+                criterio,
+                nota
+        );
     }
 
     public void excluirMissao(Long id) {
@@ -138,10 +158,23 @@ public class MissaoService {
         request.setCriancaId(criancaId);
         request.setTipo("ENTRADA");
         request.setValor(mesada);
-        request.setDescricao("Mesada calculada pelas missões");
+        request.setDescricao(
+                "Mesada calculada pelas missões"
+        );
 
         extratoService.registrar(request);
 
         return mesada;
+    }
+
+    public BigDecimal buscarMesada(Long criancaId) {
+        Optional<ConfiguracaoMesada> resultado =
+                configuracaoMesadaRepository.buscarCrianca(criancaId);
+
+        if(resultado.isEmpty()) {
+            throw new RuntimeException("Configuração de mesada não encontrada para a criança"
+            );
+        }
+        return resultado.get().getValorBase();
     }
 }

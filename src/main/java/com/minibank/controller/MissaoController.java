@@ -22,11 +22,11 @@ public class MissaoController {
     }
 
     @PostMapping("/{criancaId}")
-    public void criarMissao(
+    public Missao criarMissao(
             @PathVariable Long criancaId,
             @RequestBody MissaoRequestDTO dto) {
 
-        missaoService.criarMissao(
+        return missaoService.criarMissao(
                 criancaId,
                 dto.getCriterio(),
                 dto.getNota()
