@@ -42,7 +42,17 @@ public class ExtratoController {
 
     @GetMapping("/extrato/{criancaId}/saldo")
     public BigDecimal consultarSaldo(@PathVariable Long criancaId) {
-        return extratoService.calcularSaldo(criancaId);
+        return extratoService.calcularSaldoTotal(criancaId);
+    }
+
+    @GetMapping("/extrato/{criancaId}/saldo-metas")
+    public BigDecimal consultarValorEmMetas(@PathVariable Long criancaId) {
+        return extratoService.calcularValorEmMetas(criancaId);
+    }
+
+    @GetMapping("/extrato/{criancaId}/saldo-livre")
+    public BigDecimal consultarSaldoLivre(@PathVariable Long criancaId) {
+        return extratoService.calcularSaldoLivre(criancaId);
     }
 
 }

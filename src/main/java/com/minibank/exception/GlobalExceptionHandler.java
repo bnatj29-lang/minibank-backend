@@ -56,4 +56,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> tratarMissaoInvalida(NotaMissaoInvalidaException ex) {
         return ResponseEntity.badRequest().body(Map.of("mensagem", ex.getMessage()));
     }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarIllegalArgumentException(
+            IllegalArgumentException exception) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", exception.getMessage());
+
+        return ResponseEntity
+                .badRequest()
+                .body(erro);
+    }
 }
