@@ -22,11 +22,11 @@ public class MissaoController {
     }
 
     @PostMapping("/{criancaId}")
-    public void criarMissao(
+    public Missao criarMissao(
             @PathVariable Long criancaId,
             @RequestBody MissaoRequestDTO dto) {
 
-        missaoService.criarMissao(
+        return missaoService.criarMissao(
                 criancaId,
                 dto.getCriterio(),
                 dto.getNota()
@@ -53,11 +53,11 @@ public class MissaoController {
     }
 
     @PutMapping("/{id}")
-    public void atualizarMissao(
+    public Missao atualizarMissao(
             @PathVariable Long id,
             @RequestBody MissaoRequestDTO dto) {
 
-        missaoService.atualizarMissao(
+        return missaoService.atualizarMissao(
                 id,
                 dto.getCriterio(),
                 dto.getNota()

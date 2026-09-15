@@ -29,7 +29,7 @@ public class MissaoService {
         this.extratoService = extratoService;
     }
 
-    public void criarMissao(Long criancaId, String criterio, BigDecimal nota) {
+    public Missao criarMissao(Long criancaId, String criterio, BigDecimal nota) {
 
         if (nota.compareTo(BigDecimal.ZERO) < 0) {
             throw new NotaMissaoInvalidaException(
@@ -43,7 +43,14 @@ public class MissaoService {
             );
         }
 
-        missaoRepository.salvar(criancaId, criterio, nota);
+        Long id = missaoRepository.salvar(criancaId, criterio, nota);
+
+        return new Missao(
+                id,
+                criterio,
+                criancaId,
+                nota
+        );
     }
 
     public BigDecimal calcularMedia(Long criancaId) {
@@ -108,7 +115,7 @@ public class MissaoService {
         return missaoRepository.buscarPorId(id);
     }
 
-    public void atualizarMissao(
+    public Missao atualizarMissao(
             Long id,
             String criterio,
             BigDecimal nota) {
@@ -122,6 +129,12 @@ public class MissaoService {
         }
 
         missaoRepository.atualizar(id, criterio, nota);
+
+        Optional<Missao> resultado = missaoRepository.buscarPorId(id);
+
+        return resultado.orElseThrow(
+                () -> new RuntimeException("Missão não encontrada.")
+        );
     }
 
     public void excluirMissao(Long id) {

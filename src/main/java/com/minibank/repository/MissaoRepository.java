@@ -7,6 +7,9 @@ import org.springframework.jdbc.core.RowMapper;
 import java.util.Optional;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
+import java.sql.PreparedStatement;
 
 @Repository
 public class MissaoRepository {
@@ -18,15 +21,39 @@ public class MissaoRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public void salvar(Long criancaId, String criterio, BigDecimal nota){
+    public Long salvar(Long criancaId, String criterio, BigDecimal nota) {
 
+        KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(
-                "INSERT INTO missao (crianca_id, criterio, nota) VALUES (?,?,?)",
-                criancaId,
-                criterio,
-                nota
-        );
+        String sql = """
+            INSERT INTO missao (crianca_id, criterio, nota)
+            VALUES (?, ?, ?)
+            """;
+
+        jdbcTemplate.update(connection -> {
+
+            PreparedStatement ps = connection.prepareStatement(
+                    sql,
+                    new String[]{"id"}
+            );
+
+            ps.setLong(1, criancaId);
+            ps.setString(2, criterio);
+            ps.setBigDecimal(3, nota);
+
+            return ps;
+
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+
+        if (key == null) {
+            throw new IllegalStateException(
+                    "Não foi possível obter o ID da missão criada."
+            );
+        }
+
+        return key.longValue();
     }
 
     public List<Missao> listarPorCrianca(Long criancaId) {
