@@ -24,6 +24,11 @@ public class ConfiguracaoMesadaService {
 
     public void configurar(Long criancaId, ConfiguracaoMesadaRequestDTO dto) {
 
+        if (dto.getNotaMinimaMaxima().compareTo(dto.getNotaMinimaIntermediaria()) <= 0) {
+            throw new IllegalArgumentException(
+                    "A nota da faixa máxima deve ser maior que a nota da faixa intermediária.");
+        }
+
         ConfiguracaoMesada configuracao = new ConfiguracaoMesada();
 
         configuracao.setCriancaId(criancaId);
