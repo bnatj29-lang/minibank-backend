@@ -56,13 +56,14 @@ public class CriancaRepository {
         }, responsavelId);
     }
 
-    public boolean pertenceAoResponsável(Long criancaId, Long responsavelId){
+    public boolean pertenceAoResponsavel(Long criancaId, Long responsavelId) {
         Integer quantidade = jdbcTemplate.queryForObject(
                 "SELECT COUNT(*) FROM crianca WHERE id = ? AND usuario_id = ?",
                 Integer.class,
                 criancaId,
                 responsavelId
         );
+
         return quantidade != null && quantidade > 0;
     }
 
