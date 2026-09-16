@@ -55,4 +55,26 @@ public class CriancaRepository {
             return crianca;
         }, responsavelId);
     }
+
+    public boolean pertenceAoResponsavel(Long criancaId, Long responsavelId) {
+        Integer quantidade = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM crianca WHERE id = ? AND usuario_id = ?",
+                Integer.class,
+                criancaId,
+                responsavelId
+        );
+
+        return quantidade != null && quantidade > 0;
+    }
+
+    public void atualizar(Crianca crianca) {
+        String sql = "UPDATE crianca SET nome = ?, idade = ? WHERE id = ?";
+
+        jdbcTemplate.update(
+                sql,
+                crianca.getNome(),
+                crianca.getIdade(),
+                crianca.getId()
+        );
+    }
 }
