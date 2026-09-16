@@ -9,7 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 @Repository
 public class MissaoRepository {
@@ -25,23 +25,35 @@ public class MissaoRepository {
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        jdbcTemplate.update(
-                connection -> {
-                    var statement = connection.prepareStatement(
-                            "INSERT INTO missao (crianca_id, criterio, nota) VALUES (?, ?, ?)",
-                            Statement.RETURN_GENERATED_KEYS
-                    );
+        String sql = """
+            INSERT INTO missao (crianca_id, criterio, nota)
+            VALUES (?, ?, ?)
+            """;
 
-                    statement.setLong(1, criancaId);
-                    statement.setString(2, criterio);
-                    statement.setBigDecimal(3, nota);
+        jdbcTemplate.update(connection -> {
 
-                    return statement;
-                },
-                keyHolder
-        );
+            PreparedStatement ps = connection.prepareStatement(
+                    sql,
+                    new String[]{"id"}
+            );
 
-        return keyHolder.getKey().longValue();
+            ps.setLong(1, criancaId);
+            ps.setString(2, criterio);
+            ps.setBigDecimal(3, nota);
+
+            return ps;
+
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+
+        if (key == null) {
+            throw new IllegalStateException(
+                    "Não foi possível obter o ID da missão criada."
+            );
+        }
+
+        return key.longValue();
     }
 
     public List<Missao> listarPorCrianca(Long criancaId) {

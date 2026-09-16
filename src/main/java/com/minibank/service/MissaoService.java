@@ -6,12 +6,10 @@ import com.minibank.model.ConfiguracaoMesada;
 import com.minibank.model.Missao;
 import com.minibank.repository.ConfiguracaoMesadaRepository;
 import com.minibank.repository.MissaoRepository;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,10 +29,7 @@ public class MissaoService {
         this.extratoService = extratoService;
     }
 
-    public Missao criarMissao(
-            Long criancaId,
-            String criterio,
-            BigDecimal nota) {
+    public Missao criarMissao(Long criancaId, String criterio, BigDecimal nota) {
 
         if (nota.compareTo(BigDecimal.ZERO) < 0) {
             throw new NotaMissaoInvalidaException(
@@ -48,11 +43,7 @@ public class MissaoService {
             );
         }
 
-        Long id = missaoRepository.salvar(
-                criancaId,
-                criterio,
-                nota
-        );
+        Long id = missaoRepository.salvar(criancaId, criterio, nota);
 
         return new Missao(
                 id,
@@ -124,7 +115,7 @@ public class MissaoService {
         return missaoRepository.buscarPorId(id);
     }
 
-    public void atualizarMissao(
+    public Missao atualizarMissao(
             Long id,
             String criterio,
             BigDecimal nota) {
@@ -137,10 +128,12 @@ public class MissaoService {
             );
         }
 
-        missaoRepository.atualizar(
-                id,
-                criterio,
-                nota
+        missaoRepository.atualizar(id, criterio, nota);
+
+        Optional<Missao> resultado = missaoRepository.buscarPorId(id);
+
+        return resultado.orElseThrow(
+                () -> new RuntimeException("Missão não encontrada.")
         );
     }
 
@@ -158,27 +151,10 @@ public class MissaoService {
         request.setCriancaId(criancaId);
         request.setTipo("ENTRADA");
         request.setValor(mesada);
-        request.setDescricao(
-                "Mesada calculada pelas missões"
-        );
+        request.setDescricao("Mesada calculada pelas missões");
 
         extratoService.registrar(request);
 
         return mesada;
     }
-
-    public BigDecimal buscarMesada(Long criancaId) {
-
-        Optional<ConfiguracaoMesada> resultado =
-                configuracaoMesadaRepository.buscarCrianca(criancaId);
-
-        if (resultado.isEmpty()) {
-            throw new RuntimeException(
-                    "Configuração de mesada não encontrada para a criança."
-            );
-        }
-
-        return resultado.get().getValorBase();
-    }
-
 }

@@ -53,11 +53,11 @@ public class MissaoController {
     }
 
     @PutMapping("/{id}")
-    public void atualizarMissao(
+    public Missao atualizarMissao(
             @PathVariable Long id,
             @RequestBody MissaoRequestDTO dto) {
 
-        missaoService.atualizarMissao(
+        return missaoService.atualizarMissao(
                 id,
                 dto.getCriterio(),
                 dto.getNota()

@@ -20,6 +20,11 @@ public class CriancaRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public boolean existePorId(Long id) {
+        Integer quantidade = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM crianca WHERE id = ?", Integer.class, id);
+        return quantidade != null && quantidade > 0;
+    }
+
     public void salvar(Crianca crianca) {
         String sql = "INSERT INTO crianca (nome, idade, usuario_id, criado_em) VALUES (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();

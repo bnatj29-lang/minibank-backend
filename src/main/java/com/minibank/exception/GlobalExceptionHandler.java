@@ -9,42 +9,52 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-// Essa classe "escuta" as exceções lançadas em qualquer lugar da aplicação
-// e transforma cada uma delas numa resposta HTTP organizada, com status
-// code correto e uma mensagem clara em JSON.
-//
-// Sem isso, um erro no backend derrubaria uma stack trace feia direto
-// para o frontend, o que é ruim tanto para o usuário quanto para debugar.
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     // Erro 409 (Conflict): e-mail já cadastrado
     @ExceptionHandler(EmailJaCadastradoException.class)
-    public ResponseEntity<Map<String, String>> tratarEmailDuplicado(EmailJaCadastradoException ex) {
+    public ResponseEntity<Map<String, String>> tratarEmailDuplicado(
+            EmailJaCadastradoException ex) {
+
         Map<String, String> erro = new HashMap<>();
         erro.put("mensagem", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
-    }
 
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(erro);
+    }
 
     // Erro 401 (Unauthorized): senha do painel incorreta
     @ExceptionHandler(EmailSenhaIncorretaException.class)
-    public ResponseEntity<Map<String, String>> tratarSenhaPainelIncorreta(EmailSenhaIncorretaException ex) {
+    public ResponseEntity<Map<String, String>> tratarSenhaPainelIncorreta(
+            EmailSenhaIncorretaException ex) {
+
         Map<String, String> erro = new HashMap<>();
         erro.put("mensagem", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(erro);
+
+        return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(erro);
     }
 
-    // Erro 400 (Bad Request): campos inválidos no formulário (@NotBlank, @Email, @Size)
+    // Erro 400 (Bad Request): campos inválidos no formulário
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> tratarCamposInvalidos(MethodArgumentNotValidException ex) {
+    public ResponseEntity<Map<String, String>> tratarCamposInvalidos(
+            MethodArgumentNotValidException ex) {
+
         Map<String, String> erros = new HashMap<>();
+
         ex.getBindingResult().getFieldErrors().forEach(erro ->
-            erros.put(erro.getField(), erro.getDefaultMessage())
+                erros.put(erro.getField(), erro.getDefaultMessage())
         );
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(erros);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(erros);
     }
 
+    // Erro de saldo insuficiente
     @ExceptionHandler(SaldoInsuficienteException.class)
     public ResponseEntity<Map<String, String>> tratarSaldoInsuficiente(
             SaldoInsuficienteException ex) {
@@ -57,7 +67,7 @@ public class GlobalExceptionHandler {
                 .body(erro);
     }
 
-    // Erro 400 (Bad Request): valor da movimentação inválido
+    // Erro 400: valor da movimentação inválido
     @ExceptionHandler(ValorMovimentacaoInvalidoException.class)
     public ResponseEntity<Map<String, String>> tratarValorInvalido(
             ValorMovimentacaoInvalidoException ex) {
@@ -70,8 +80,7 @@ public class GlobalExceptionHandler {
                 .body(erro);
     }
 
-
-    // Erro 400 (Bad Request): tipo de movimentação inválido
+    // Erro 400: tipo da movimentação inválido
     @ExceptionHandler(TipoMovimentacaoInvalidoException.class)
     public ResponseEntity<Map<String, String>> tratarTipoInvalido(
             TipoMovimentacaoInvalidoException ex) {
@@ -84,11 +93,39 @@ public class GlobalExceptionHandler {
                 .body(erro);
     }
 
-
+    // Erros relacionados às metas
     @ExceptionHandler(MetaException.class)
-    public ResponseEntity<Map<String, String>> tratarMetaNaoEncontrada(MetaException ex) {
+    public ResponseEntity<Map<String, String>> tratarMetaNaoEncontrada(
+            MetaException ex) {
+
         Map<String, String> erro = new HashMap<>();
         erro.put("mensagem", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(erro);
+    }
+
+    // Erros relacionados às missões
+    @ExceptionHandler(NotaMissaoInvalidaException.class)
+    public ResponseEntity<Map<String, String>> tratarMissaoInvalida(
+            NotaMissaoInvalidaException ex) {
+
+        return ResponseEntity
+                .badRequest()
+                .body(Map.of("mensagem", ex.getMessage()));
+    }
+
+    // Tratamento genérico para outros IllegalArgumentException
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> tratarIllegalArgumentException(
+            IllegalArgumentException exception) {
+
+        Map<String, String> erro = new HashMap<>();
+        erro.put("mensagem", exception.getMessage());
+
+        return ResponseEntity
+                .badRequest()
+                .body(erro);
     }
 }
