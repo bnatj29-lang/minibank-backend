@@ -8,6 +8,7 @@ import com.minibank.exception.CriancaNaoPertenceException;
 import com.minibank.model.Crianca;
 import com.minibank.repository.CriancaRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -70,5 +71,16 @@ public class CriancaService {
 
         // 4 - Atualiza a criança no banco
         criancaRepository.atualizar(crianca);
+    }
+
+    @Transactional
+    public void excluir(Long criancaId, Long responsavelId) {
+        if (!criancaRepository.existePorId(criancaId)) {
+            throw new CriancaNaoEncontradaException("Criança não encontrada.");
+        }
+        if (!criancaRepository.pertenceAoResponsavel(criancaId, responsavelId)) {
+            throw new CriancaNaoPertenceException("Essa criança não pertence a este responsável.");
+        }
+        criancaRepository.excluir(criancaId);
     }
 }

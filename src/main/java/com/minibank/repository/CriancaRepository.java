@@ -77,4 +77,12 @@ public class CriancaRepository {
                 crianca.getId()
         );
     }
+
+    public void excluir(Long criancaId) {
+        jdbcTemplate.update("DELETE FROM configuracao_mesada WHERE crianca_id = ?", criancaId);
+        jdbcTemplate.update("DELETE FROM extrato WHERE crianca_id = ?", criancaId);
+        jdbcTemplate.update("DELETE FROM missao WHERE crianca_id = ?", criancaId);
+        jdbcTemplate.update("DELETE FROM meta WHERE crianca_id = ?", criancaId);
+        jdbcTemplate.update("DELETE FROM crianca WHERE id = ?", criancaId);
+    }
 }

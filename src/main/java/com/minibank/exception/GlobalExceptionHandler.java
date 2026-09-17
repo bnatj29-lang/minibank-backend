@@ -66,6 +66,13 @@ public class GlobalExceptionHandler {
                 .body(Map.of("mensagem", exception.getMessage()));
     }
 
+    @ExceptionHandler(ConfiguracaoMesadaNaoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> tratarConfiguracaoMesadaNaoEncontrada(
+            ConfiguracaoMesadaNaoEncontradaException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensagem", exception.getMessage()));
+    }
+
     // Erro de saldo insuficiente
     @ExceptionHandler(SaldoInsuficienteException.class)
     public ResponseEntity<Map<String, String>> tratarSaldoInsuficiente(

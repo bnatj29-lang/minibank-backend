@@ -277,6 +277,26 @@ SELECT * FROM crianca;
 
 Não é necessário criar o banco ou as tabelas manualmente.
 
+## Configuração do JWT
+
+Para iniciar a API, defina `MINIBANK_JWT_SECRET` com uma chave de pelo menos 32 caracteres. Essa chave assina os tokens de login e não deve ser commitada no repositório.
+
+No macOS ou Linux:
+
+```bash
+export MINIBANK_JWT_SECRET="uma-chave-secreta-com-pelo-menos-32-caracteres"
+mvn spring-boot:run
+```
+
+No PowerShell:
+
+```powershell
+$env:MINIBANK_JWT_SECRET="uma-chave-secreta-com-pelo-menos-32-caracteres"
+mvn spring-boot:run
+```
+
+Os tokens expiram em uma hora por padrão. Esse período pode ser alterado pela variável opcional `MINIBANK_JWT_EXPIRACAO_MS`.
+
 ## Encerrando o projeto
 
 Encerre a API pressionando `Ctrl + C` no terminal em que o Maven está rodando.

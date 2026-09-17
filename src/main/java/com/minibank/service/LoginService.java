@@ -21,15 +21,18 @@ public class LoginService {
     private final ResponsavelRepository responsavelRepository;
     private final PasswordEncoder passwordEncoder;
     private final CriancaRepository criancaRepository;
+    private final JwtService jwtService;
 
     public LoginService(
             ResponsavelRepository responsavelRepository,
             PasswordEncoder passwordEncoder,
-            CriancaRepository criancaRepository) {
+            CriancaRepository criancaRepository,
+            JwtService jwtService) {
 
         this.responsavelRepository = responsavelRepository;
         this.passwordEncoder = passwordEncoder;
         this.criancaRepository = criancaRepository;
+        this.jwtService = jwtService;
     }
 
     public LoginResponseDTO login(LoginRequestDTO dto) {
@@ -51,6 +54,7 @@ public class LoginService {
             respostasCriancas.add(new CriancaResponseDTO(crianca));
         }
 
-        return new LoginResponseDTO(new ResponsavelResponseDTO(responsavel), respostasCriancas);
+        String token = jwtService.gerarToken(responsavel.getId());
+        return new LoginResponseDTO(new ResponsavelResponseDTO(responsavel), respostasCriancas, token);
     }
 }

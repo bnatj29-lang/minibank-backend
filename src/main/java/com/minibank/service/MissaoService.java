@@ -2,6 +2,7 @@ package com.minibank.service;
 
 import com.minibank.dto.RegistrarExtratoRequestDTO;
 import com.minibank.exception.NotaMissaoInvalidaException;
+import com.minibank.exception.ConfiguracaoMesadaNaoEncontradaException;
 import com.minibank.model.ConfiguracaoMesada;
 import com.minibank.model.Missao;
 import com.minibank.repository.ConfiguracaoMesadaRepository;
@@ -85,7 +86,7 @@ public class MissaoService {
                 configuracaoMesadaRepository.buscarCrianca(criancaId);
 
         if (resultado.isEmpty()) {
-            throw new RuntimeException(
+            throw new ConfiguracaoMesadaNaoEncontradaException(
                     "Configuração de mesada não encontrada para a criança."
             );
         }

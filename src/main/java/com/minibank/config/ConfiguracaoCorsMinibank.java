@@ -3,6 +3,7 @@ package com.minibank.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
@@ -11,11 +12,12 @@ import java.util.List;
 public class ConfiguracaoCorsMinibank {
 
     @Bean
-    public UrlBasedCorsConfigurationSource configuracaoCors() {
+    public CorsConfigurationSource configuracaoCors() {
         CorsConfiguration configuracao = new CorsConfiguration();
         configuracao.setAllowedOrigins(List.of("http://localhost:5173"));
         configuracao.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuracao.setAllowedHeaders(List.of("Content-Type", "Authorization"));
+        configuracao.setAllowCredentials(false);
 
         // Aplica a mesma permissão a todos os endpoints, inclusive os novos.
         UrlBasedCorsConfigurationSource origem = new UrlBasedCorsConfigurationSource();

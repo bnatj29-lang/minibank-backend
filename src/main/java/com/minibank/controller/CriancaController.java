@@ -15,7 +15,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/criancas")
-@CrossOrigin(origins = "http://localhost:5173")
 public class CriancaController {
 
     private final CriancaService criancaService;
@@ -63,5 +62,13 @@ public class CriancaController {
                 responsavelId,
                 request
         );
+    }
+
+    @DeleteMapping("/{criancaId}/responsavel/{responsavelId}")
+    public ResponseEntity<Void> excluir(
+            @PathVariable Long criancaId,
+            @PathVariable Long responsavelId) {
+        criancaService.excluir(criancaId, responsavelId);
+        return ResponseEntity.noContent().build();
     }
 }

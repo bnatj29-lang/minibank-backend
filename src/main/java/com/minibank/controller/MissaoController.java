@@ -8,11 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import org.springframework.http.ResponseEntity;
 import java.math.BigDecimal;
-import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
 @RequestMapping("/missoes")
-@CrossOrigin(origins = "http://localhost:5173")
 public class MissaoController {
 
     private final MissaoService missaoService;

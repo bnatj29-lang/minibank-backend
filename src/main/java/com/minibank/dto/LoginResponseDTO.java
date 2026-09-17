@@ -7,10 +7,12 @@ public class LoginResponseDTO {
 
     private ResponsavelResponseDTO responsavel;
     private List<CriancaResponseDTO> criancas;
+    private String token;
 
-    public LoginResponseDTO(ResponsavelResponseDTO responsavel, List<CriancaResponseDTO> criancas) {
+    public LoginResponseDTO(ResponsavelResponseDTO responsavel, List<CriancaResponseDTO> criancas, String token) {
         this.responsavel = responsavel;
         this.criancas = criancas;
+        this.token = token;
     }
 
     public ResponsavelResponseDTO getResponsavel() {
@@ -19,5 +21,9 @@ public class LoginResponseDTO {
 
     public List<CriancaResponseDTO> getCriancas() {
         return criancas;
+    }
+
+    public String getToken() {
+        return token;
     }
 }
