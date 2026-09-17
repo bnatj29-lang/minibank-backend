@@ -1,6 +1,7 @@
 package com.minibank.controller;
 
-import com.minibank.dto.CriancaRequestDTO;
+import com.minibank.dto.AdicionarCriancaRequestDTO;
+import com.minibank.dto.CriancaResponseDTO;
 import com.minibank.dto.EditarCriancaRequestDTO;
 import com.minibank.service.CriancaService;
 import jakarta.validation.Valid;
@@ -9,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.minibank.model.Crianca;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/criancas")
@@ -27,7 +30,7 @@ public class CriancaController {
 
     @PostMapping
     public ResponseEntity<Crianca> adicionarCrianca(
-            @Valid @RequestBody CriancaRequestDTO dto,
+            @Valid @RequestBody AdicionarCriancaRequestDTO dto,
             @RequestParam Long responsavelId
     ) {
 
@@ -37,6 +40,11 @@ public class CriancaController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(crianca);
+    }
+
+    @GetMapping("/responsavel/{responsavelId}")
+    public List<CriancaResponseDTO> listarPorResponsavel(@PathVariable Long responsavelId) {
+        return criancaService.listarPorResponsavel(responsavelId);
     }
 
     // ================

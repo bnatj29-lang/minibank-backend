@@ -54,6 +54,18 @@ public class GlobalExceptionHandler {
                 .body(erros);
     }
 
+    @ExceptionHandler(CriancaNaoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> tratarCriancaNaoEncontrada(CriancaNaoEncontradaException exception) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("mensagem", exception.getMessage()));
+    }
+
+    @ExceptionHandler(CriancaNaoPertenceException.class)
+    public ResponseEntity<Map<String, String>> tratarCriancaNaoPertence(CriancaNaoPertenceException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensagem", exception.getMessage()));
+    }
+
     // Erro de saldo insuficiente
     @ExceptionHandler(SaldoInsuficienteException.class)
     public ResponseEntity<Map<String, String>> tratarSaldoInsuficiente(

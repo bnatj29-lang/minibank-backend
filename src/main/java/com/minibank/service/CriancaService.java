@@ -1,10 +1,15 @@
 package com.minibank.service;
 
-import com.minibank.dto.CriancaRequestDTO;
+import com.minibank.dto.AdicionarCriancaRequestDTO;
+import com.minibank.dto.CriancaResponseDTO;
 import com.minibank.dto.EditarCriancaRequestDTO;
+import com.minibank.exception.CriancaNaoEncontradaException;
+import com.minibank.exception.CriancaNaoPertenceException;
 import com.minibank.model.Crianca;
 import com.minibank.repository.CriancaRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class CriancaService {
@@ -15,7 +20,7 @@ public class CriancaService {
         this.criancaRepository = criancaRepository;
     }
 
-    public Crianca adicionarCrianca(CriancaRequestDTO dto, Long responsavelId) {
+    public Crianca adicionarCrianca(AdicionarCriancaRequestDTO dto, Long responsavelId) {
 
         Crianca crianca = new Crianca(
                 responsavelId,
@@ -28,6 +33,12 @@ public class CriancaService {
         return crianca;
     }
 
+    public List<CriancaResponseDTO> listarPorResponsavel(Long responsavelId) {
+        return criancaRepository.buscarPorResponsavel(responsavelId).stream()
+                .map(CriancaResponseDTO::new)
+                .toList();
+    }
+
     public void editar(
             Long criancaId,
             Long responsavelId,
@@ -36,7 +47,7 @@ public class CriancaService {
 
         // 1 - Verifica se a criança existe
         if (!criancaRepository.existePorId(criancaId)) {
-            throw new RuntimeException("Criança não encontrada.");
+            throw new CriancaNaoEncontradaException("Criança não encontrada.");
         }
 
         // 2 - Verifica se a criança pertence ao responsável
@@ -44,7 +55,7 @@ public class CriancaService {
                 criancaId,
                 responsavelId
         )) {
-            throw new RuntimeException(
+            throw new CriancaNaoPertenceException(
                     "Essa criança não pertence a este responsável."
             );
         }
