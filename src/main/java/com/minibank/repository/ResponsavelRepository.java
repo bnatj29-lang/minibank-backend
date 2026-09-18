@@ -70,6 +70,12 @@ public class ResponsavelRepository {
         return resultado.stream().findFirst();
     }
 
+    public void atualizarSenha(Long responsavelId, String senhaHash) {
+        jdbcTemplate.update(
+                "UPDATE usuario SET senha_hash = ? WHERE id = ?",
+                senhaHash, responsavelId);
+    }
+
     // Transforma uma linha do ResultSet (retorno "cru" do banco) em um objeto Usuario.
     // Com Hibernate isso acontecia escondido; aqui fica explícito coluna por coluna.
     private Responsavel mapearUsuario(ResultSet rs, int rowNum) throws SQLException {

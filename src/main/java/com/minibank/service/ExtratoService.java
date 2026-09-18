@@ -20,16 +20,20 @@ public class ExtratoService {
 
     private final ExtratoRepository extratoRepository;
     private final MetaRepository metaRepository;
+    private final AutorizacaoService autorizacaoService;
 
     public ExtratoService(
             ExtratoRepository extratoRepository,
-            MetaRepository metaRepository
+            MetaRepository metaRepository,
+            AutorizacaoService autorizacaoService
     ) {
         this.extratoRepository = extratoRepository;
         this.metaRepository = metaRepository;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public void registrar(RegistrarExtratoRequestDTO request) {
+        autorizacaoService.validarCrianca(request.getCriancaId());
 
         // 1 - O valor precisa ser maior que zero
         if (request.getValor().compareTo(BigDecimal.ZERO) <= 0) {
@@ -73,12 +77,14 @@ public class ExtratoService {
     }
 
     public List<Extrato> consultar(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
         return extratoRepository.buscarPorCrianca(criancaId);
     }
 
     // Calcula todo o dinheiro da criança:
     // ENTRADAS - RETIRADAS
     public BigDecimal calcularSaldoTotal(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         List<Extrato> extratos =
                 extratoRepository.buscarPorCrianca(criancaId);
@@ -105,6 +111,7 @@ public class ExtratoService {
     // Calcula quanto do dinheiro está reservado
     // em metas ATIVAS ou ALCANÇADAS
     public BigDecimal calcularValorEmMetas(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         List<Meta> metas =
                 metaRepository.buscarMetas(criancaId);
@@ -128,6 +135,7 @@ public class ExtratoService {
 
     // Saldo livre = saldo total - dinheiro reservado nas metas
     public BigDecimal calcularSaldoLivre(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         BigDecimal saldoTotal =
                 calcularSaldoTotal(criancaId);
@@ -145,6 +153,7 @@ public class ExtratoService {
             BigDecimal valor,
             String descricao
     ) {
+        autorizacaoService.validarCrianca(criancaId);
 
         if (valor.compareTo(BigDecimal.ZERO) <= 0) {
             throw new ValorMovimentacaoInvalidoException(

@@ -11,18 +11,22 @@ import java.util.Optional;
 public class ConfiguracaoMesadaService {
 
     private final ConfiguracaoMesadaRepository repository;
+    private final AutorizacaoService autorizacaoService;
 
-    public ConfiguracaoMesadaService(ConfiguracaoMesadaRepository repository) {
+    public ConfiguracaoMesadaService(ConfiguracaoMesadaRepository repository, AutorizacaoService autorizacaoService) {
 
         this.repository = repository;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public Optional<ConfiguracaoMesada> buscar(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         return repository.buscarCrianca(criancaId);
     }
 
     public void configurar(Long criancaId, ConfiguracaoMesadaRequestDTO dto) {
+        autorizacaoService.validarCrianca(criancaId);
 
         if (dto.getNotaMinimaMaxima().compareTo(dto.getNotaMinimaIntermediaria()) <= 0) {
             throw new IllegalArgumentException(

@@ -11,6 +11,16 @@ CREATE TABLE IF NOT EXISTS usuario (
     criado_em TIMESTAMP NOT NULL
     );
 
+CREATE TABLE IF NOT EXISTS token_recuperacao_senha (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    responsavel_id BIGINT NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    data_criacao TIMESTAMP NOT NULL,
+    data_expiracao TIMESTAMP NOT NULL,
+    utilizado_em TIMESTAMP NULL,
+    FOREIGN KEY (responsavel_id) REFERENCES usuario(id)
+    );
+
 CREATE TABLE IF NOT EXISTS crianca (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(255) NOT NULL,

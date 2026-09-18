@@ -16,12 +16,15 @@ import java.util.List;
 public class CriancaService {
 
     private final CriancaRepository criancaRepository;
+    private final AutorizacaoService autorizacaoService;
 
-    public CriancaService(CriancaRepository criancaRepository) {
+    public CriancaService(CriancaRepository criancaRepository, AutorizacaoService autorizacaoService) {
         this.criancaRepository = criancaRepository;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public Crianca adicionarCrianca(AdicionarCriancaRequestDTO dto, Long responsavelId) {
+        autorizacaoService.validarResponsavel(responsavelId);
 
         Crianca crianca = new Crianca(
                 responsavelId,
@@ -35,6 +38,7 @@ public class CriancaService {
     }
 
     public List<CriancaResponseDTO> listarPorResponsavel(Long responsavelId) {
+        autorizacaoService.validarResponsavel(responsavelId);
         return criancaRepository.buscarPorResponsavel(responsavelId).stream()
                 .map(CriancaResponseDTO::new)
                 .toList();
@@ -45,6 +49,8 @@ public class CriancaService {
             Long responsavelId,
             EditarCriancaRequestDTO request
     ) {
+        autorizacaoService.validarResponsavel(responsavelId);
+        autorizacaoService.validarCrianca(criancaId);
 
         // 1 - Verifica se a criança existe
         if (!criancaRepository.existePorId(criancaId)) {
@@ -75,6 +81,8 @@ public class CriancaService {
 
     @Transactional
     public void excluir(Long criancaId, Long responsavelId) {
+        autorizacaoService.validarResponsavel(responsavelId);
+        autorizacaoService.validarCrianca(criancaId);
         if (!criancaRepository.existePorId(criancaId)) {
             throw new CriancaNaoEncontradaException("Criança não encontrada.");
         }

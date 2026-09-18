@@ -5,12 +5,31 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> tratarAcessoNegado(AccessDeniedException exception) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(Map.of("mensagem", "Acesso negado."));
+    }
+
+    @ExceptionHandler(TokenRecuperacaoInvalidoException.class)
+    public ResponseEntity<Map<String, String>> tratarTokenRecuperacaoInvalido(TokenRecuperacaoInvalidoException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("mensagem", exception.getMessage()));
+    }
+
+    @ExceptionHandler(EmailRecuperacaoException.class)
+    public ResponseEntity<Map<String, String>> tratarFalhaEmailRecuperacao(EmailRecuperacaoException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(Map.of("mensagem", exception.getMessage()));
+    }
 
     // Erro 409 (Conflict): e-mail já cadastrado
     @ExceptionHandler(EmailJaCadastradoException.class)

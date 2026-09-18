@@ -19,18 +19,22 @@ public class MissaoService {
     private final MissaoRepository missaoRepository;
     private final ConfiguracaoMesadaRepository configuracaoMesadaRepository;
     private final ExtratoService extratoService;
+    private final AutorizacaoService autorizacaoService;
 
     public MissaoService(
             MissaoRepository missaoRepository,
             ConfiguracaoMesadaRepository configuracaoMesadaRepository,
-            ExtratoService extratoService) {
+            ExtratoService extratoService,
+            AutorizacaoService autorizacaoService) {
 
         this.missaoRepository = missaoRepository;
         this.configuracaoMesadaRepository = configuracaoMesadaRepository;
         this.extratoService = extratoService;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public Missao criarMissao(Long criancaId, String criterio, BigDecimal nota) {
+        autorizacaoService.validarCrianca(criancaId);
 
         if (nota.compareTo(BigDecimal.ZERO) < 0) {
             throw new NotaMissaoInvalidaException(
@@ -55,6 +59,7 @@ public class MissaoService {
     }
 
     public BigDecimal calcularMedia(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         List<Missao> missoes =
                 missaoRepository.listarPorCrianca(criancaId);
@@ -109,17 +114,24 @@ public class MissaoService {
     }
 
     public List<Missao> listarMissoes(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
         return missaoRepository.listarPorCrianca(criancaId);
     }
 
     public Optional<Missao> buscarMissaoPorId(Long id) {
-        return missaoRepository.buscarPorId(id);
+        Optional<Missao> resultado = missaoRepository.buscarPorId(id);
+        resultado.ifPresent(missao -> autorizacaoService.validarCrianca(missao.getCriancaId()));
+        return resultado;
     }
 
     public Missao atualizarMissao(
             Long id,
             String criterio,
             BigDecimal nota) {
+
+        Missao existente = missaoRepository.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Missão não encontrada."));
+        autorizacaoService.validarCrianca(existente.getCriancaId());
 
         if (nota.compareTo(BigDecimal.ZERO) < 0 ||
                 nota.compareTo(BigDecimal.TEN) > 0) {
@@ -139,6 +151,9 @@ public class MissaoService {
     }
 
     public void excluirMissao(Long id) {
+        Missao missao = missaoRepository.buscarPorId(id)
+                .orElseThrow(() -> new RuntimeException("Missão não encontrada."));
+        autorizacaoService.validarCrianca(missao.getCriancaId());
         missaoRepository.excluir(id);
     }
 

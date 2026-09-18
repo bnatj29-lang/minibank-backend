@@ -20,13 +20,17 @@ public class MetaService {
 
     private final MetaRepository metaRepository;
     private final ExtratoService extratoService;
+    private final AutorizacaoService autorizacaoService;
 
-    public MetaService(MetaRepository metaRepository, ExtratoService extratoService) {
+    public MetaService(MetaRepository metaRepository, ExtratoService extratoService,
+                       AutorizacaoService autorizacaoService) {
         this.metaRepository = metaRepository;
         this.extratoService = extratoService;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public MetaResponseDTO criarMeta(Long criancaId, MetaRequestDTO requestDTO) {
+        autorizacaoService.validarCrianca(criancaId);
         Meta novaMeta = new Meta(criancaId, requestDTO.getNomeMeta(), requestDTO.getValorMeta());
         metaRepository.salvar(novaMeta);
 
@@ -49,6 +53,7 @@ public class MetaService {
     }
 
     public List<MetaResponseDTO> listarMetas(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         List<Meta> metas = metaRepository.buscarMetas(criancaId);
 
@@ -79,6 +84,7 @@ public class MetaService {
     }
 
     public MetaResponseDTO buscarMetaPorId(Long criancaId, Long id) {
+        autorizacaoService.validarCrianca(criancaId);
 
         Meta meta = metaRepository.buscarMetaPorId(id)
                 .orElseThrow(() -> new MetaException("Meta não encontrada"));
@@ -112,6 +118,7 @@ public class MetaService {
             Long metaId,
             MetaRequestDTO requestDTO
     ) {
+        autorizacaoService.validarCrianca(criancaId);
 
         Meta meta = metaRepository.buscarMetaPorId(metaId)
                 .orElseThrow(() -> new MetaException("Meta não encontrada"));
@@ -163,6 +170,7 @@ public class MetaService {
     }
 
     public String excluirMeta(Long criancaId, Long metaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         Meta meta = metaRepository.buscarMetaPorId(metaId)
                 .orElseThrow(() -> new MetaException("Meta não encontrada"));
@@ -183,6 +191,7 @@ public class MetaService {
             Long metaId,
             AporteMetaRequestDTO requestDTO
     ) {
+        autorizacaoService.validarCrianca(criancaId);
 
         // Busca a meta
         Meta meta = metaRepository.buscarMetaPorId(metaId)
@@ -260,6 +269,7 @@ public class MetaService {
 
     @Transactional
     public MetaResponseDTO conquistarMeta(Long criancaId, Long metaId) {
+        autorizacaoService.validarCrianca(criancaId);
 
         // Busca a meta no banco
         Meta meta = metaRepository.buscarMetaPorId(metaId)
@@ -312,4 +322,3 @@ public class MetaService {
         );
     }
 }
-

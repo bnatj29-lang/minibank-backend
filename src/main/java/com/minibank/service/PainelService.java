@@ -13,13 +13,17 @@ public class PainelService {
 
     private final ResponsavelRepository responsavelRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AutorizacaoService autorizacaoService;
 
-    public PainelService(ResponsavelRepository responsavelRepository, PasswordEncoder passwordEncoder) {
+    public PainelService(ResponsavelRepository responsavelRepository, PasswordEncoder passwordEncoder,
+                         AutorizacaoService autorizacaoService) {
         this.responsavelRepository = responsavelRepository;
         this.passwordEncoder = passwordEncoder;
+        this.autorizacaoService = autorizacaoService;
     }
 
     public void verificarSenhaPainel(String emailLogado, String senhaDigitada) {
+        autorizacaoService.validarEmailResponsavel(emailLogado);
         Optional<Responsavel> responsavelOpt = responsavelRepository.buscarPorEmail(emailLogado);
 
         Responsavel responsavel = responsavelOpt.orElseThrow(() -> new EmailSenhaIncorretaException("E-mail ou senha inválidos"));

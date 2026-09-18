@@ -28,7 +28,8 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))
                 .sessionManagement(sessao -> sessao.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/contas/cadastro", "/autenticar/login", "/error").permitAll()
+                        .requestMatchers("/contas/cadastro", "/autenticar/login", "/autenticar/esqueci-senha",
+                                "/autenticar/redefinir-senha", "/autenticar/redefinir-senha/validar", "/error").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(filtroJwt, UsernamePasswordAuthenticationFilter.class);
