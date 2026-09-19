@@ -23,6 +23,8 @@ public class ConfiguracaoCorsMinibank {
         if (origemFrontendAdicional != null && !origemFrontendAdicional.isEmpty()) {
             origensPermitidas.add(origemFrontendAdicional);
         }
+        String frontendUrl = System.getenv().getOrDefault("FRONTEND_URL", "http://localhost:5173");
+        configuracao.setAllowedOrigins(List.of("http://localhost:5173", frontendUrl));
         configuracao.setAllowedOrigins(origensPermitidas);
         configuracao.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuracao.setAllowedHeaders(List.of("Content-Type", "Authorization"));
