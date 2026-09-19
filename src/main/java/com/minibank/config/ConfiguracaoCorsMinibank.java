@@ -14,7 +14,8 @@ public class ConfiguracaoCorsMinibank {
     @Bean
     public CorsConfigurationSource configuracaoCors() {
         CorsConfiguration configuracao = new CorsConfiguration();
-        configuracao.setAllowedOrigins(List.of("http://localhost:5173"));
+        String frontendUrl = System.getenv().getOrDefault("FRONTEND_URL", "http://localhost:5173");
+        configuracao.setAllowedOrigins(List.of("http://localhost:5173", frontendUrl));
         configuracao.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuracao.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuracao.setAllowCredentials(false);
