@@ -109,7 +109,7 @@ public class ExtratoService {
     }
 
     // Calcula quanto do dinheiro está reservado
-    // em metas ATIVAS ou ALCANÇADAS
+    // em metas ATIVAS, ALCANÇADAS ou aguardando aprovação
     public BigDecimal calcularValorEmMetas(Long criancaId) {
         autorizacaoService.validarCrianca(criancaId);
 
@@ -123,7 +123,8 @@ public class ExtratoService {
             Meta meta = metas.get(i);
 
             if (meta.getStatus() == StatusMeta.ATIVA ||
-                    meta.getStatus() == StatusMeta.ALCANÇADA) {
+                    meta.getStatus() == StatusMeta.ALCANÇADA ||
+                    meta.getStatus() == StatusMeta.AGUARDANDO_APROVACAO) {
 
                 valorEmMetas =
                         valorEmMetas.add(meta.getValorGuardado());

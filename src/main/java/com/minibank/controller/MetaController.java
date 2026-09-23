@@ -74,4 +74,24 @@ public class MetaController {
             @PathVariable Long metaId) {
         return service.conquistarMeta(criancaId, metaId);
     }
+
+    @PostMapping("/{criancaId}/metas/{metaId}/solicitar-conquista")
+    public MetaResponseDTO solicitarConquista(@PathVariable Long criancaId, @PathVariable Long metaId) {
+        return service.solicitarConquista(criancaId, metaId);
+    }
+
+    @GetMapping("/{criancaId}/solicitacoes")
+    public List<MetaResponseDTO> listarSolicitacoes(@PathVariable Long criancaId) {
+        return service.listarSolicitacoes(criancaId);
+    }
+
+    @PostMapping("/{criancaId}/metas/{metaId}/aprovar-conquista")
+    public MetaResponseDTO aprovarConquista(@PathVariable Long criancaId, @PathVariable Long metaId) {
+        return service.aprovarConquista(criancaId, metaId);
+    }
+
+    @PostMapping("/{criancaId}/metas/{metaId}/recusar-conquista")
+    public MetaResponseDTO recusarConquista(@PathVariable Long criancaId, @PathVariable Long metaId) {
+        return service.recusarConquista(criancaId, metaId);
+    }
 }

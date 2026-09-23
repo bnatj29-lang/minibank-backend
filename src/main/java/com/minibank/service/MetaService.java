@@ -127,8 +127,8 @@ public class MetaService {
             throw new MetaException("Essa meta não pertence a esta criança");
         }
 
-        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
-            throw new MetaException("Não é possível editar uma meta conquistada!");
+        if (meta.getStatus() == StatusMeta.CONQUISTADA || meta.getStatus() == StatusMeta.AGUARDANDO_APROVACAO) {
+            throw new MetaException("Não é possível editar uma meta conquistada ou aguardando aprovação!");
         }
 
         if (requestDTO.getValorMeta().compareTo(BigDecimal.ZERO) <= 0) {
@@ -179,8 +179,8 @@ public class MetaService {
             throw new MetaException("Essa meta não pertence a esta criança");
         }
 
-        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
-            throw new MetaException("Não é possível excluir uma meta conquistada!");
+        if (meta.getStatus() == StatusMeta.CONQUISTADA || meta.getStatus() == StatusMeta.AGUARDANDO_APROVACAO) {
+            throw new MetaException("Não é possível excluir uma meta conquistada ou aguardando aprovação!");
         }
 
         return metaRepository.excluir(metaId);
@@ -203,8 +203,8 @@ public class MetaService {
         }
 
         // Não permite guardar dinheiro em uma meta já conquistada
-        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
-            throw new MetaException("Não é possível guardar valor em uma meta conquistada!");
+        if (meta.getStatus() == StatusMeta.CONQUISTADA || meta.getStatus() == StatusMeta.AGUARDANDO_APROVACAO) {
+            throw new MetaException("Não é possível guardar valor nesta meta enquanto ela aguarda aprovação ou já foi conquistada!");
         }
 
         // O valor que será guardado precisa ser maior que zero
@@ -267,33 +267,36 @@ public class MetaService {
         );
     }
 
-    @Transactional
-    public MetaResponseDTO conquistarMeta(Long criancaId, Long metaId) {
+    public MetaResponseDTO solicitarConquista(Long criancaId, Long metaId) {
         autorizacaoService.validarCrianca(criancaId);
-
-        // Busca a meta no banco
         Meta meta = metaRepository.buscarMetaPorId(metaId)
                 .orElseThrow(() -> new MetaException("Meta não encontrada"));
-
-        // Confere se essa meta realmente pertence à criança
         if (!meta.getCriancaId().equals(criancaId)) {
             throw new MetaException("Essa meta não pertence a esta criança");
         }
-
-        // Uma meta ainda em andamento não pode ser conquistada
-        if (meta.getStatus() == StatusMeta.ATIVA) {
-            throw new MetaException(
-                    "A meta ainda não foi alcançada!"
-            );
+        if (meta.getStatus() != StatusMeta.ALCANÇADA) {
+            throw new MetaException("Somente uma meta alcançada pode solicitar conquista.");
         }
+        meta.setStatus(StatusMeta.AGUARDANDO_APROVACAO);
+        metaRepository.atualizar(meta);
+        return resposta(meta);
+    }
 
-        // Impede que a mesma meta seja conquistada duas vezes
-        if (meta.getStatus() == StatusMeta.CONQUISTADA) {
-            throw new MetaException(
-                    "Essa meta já foi conquistada!"
-            );
+    public List<MetaResponseDTO> listarSolicitacoes(Long criancaId) {
+        autorizacaoService.validarCrianca(criancaId);
+        return metaRepository.buscarMetas(criancaId).stream()
+                .filter(meta -> meta.getStatus() == StatusMeta.AGUARDANDO_APROVACAO)
+                .map(this::resposta)
+                .toList();
+    }
+
+    @Transactional
+    public MetaResponseDTO aprovarConquista(Long criancaId, Long metaId) {
+        autorizacaoService.validarCrianca(criancaId);
+        Meta meta = buscarMetaDaCrianca(criancaId, metaId);
+        if (meta.getStatus() != StatusMeta.AGUARDANDO_APROVACAO) {
+            throw new MetaException("A solicitação não está aguardando aprovação.");
         }
-
         // Agora o dinheiro reservado passa a ser um gasto real
         extratoService.registrarRetiradaMeta(
                 criancaId,
@@ -307,18 +310,41 @@ public class MetaService {
         // Salva a mudança no banco
         metaRepository.atualizar(meta);
 
-        // Como ela foi conquistada, continua 100% completa
-        BigDecimal valorRestante = BigDecimal.ZERO;
-        double percentual = 100.0;
+        return resposta(meta);
+    }
 
-        return new MetaResponseDTO(
-                meta.getId(),
-                meta.getNomeMeta(),
-                meta.getValorGuardado(),
-                meta.getValorMeta(),
-                valorRestante,
-                percentual,
-                meta.getStatus()
-        );
+    public MetaResponseDTO recusarConquista(Long criancaId, Long metaId) {
+        autorizacaoService.validarCrianca(criancaId);
+        Meta meta = buscarMetaDaCrianca(criancaId, metaId);
+        if (meta.getStatus() != StatusMeta.AGUARDANDO_APROVACAO) {
+            throw new MetaException("A solicitação não está aguardando aprovação.");
+        }
+        meta.setStatus(StatusMeta.ALCANÇADA);
+        metaRepository.atualizar(meta);
+        return resposta(meta);
+    }
+
+    /** Mantém o contrato antigo seguro: conquistar agora apenas solicita aprovação. */
+    public MetaResponseDTO conquistarMeta(Long criancaId, Long metaId) {
+        return solicitarConquista(criancaId, metaId);
+    }
+
+    private Meta buscarMetaDaCrianca(Long criancaId, Long metaId) {
+        Meta meta = metaRepository.buscarMetaPorId(metaId)
+                .orElseThrow(() -> new MetaException("Meta não encontrada"));
+        if (!meta.getCriancaId().equals(criancaId)) {
+            throw new MetaException("Essa meta não pertence a esta criança");
+        }
+        return meta;
+    }
+
+    private MetaResponseDTO resposta(Meta meta) {
+        BigDecimal valorRestante = meta.getStatus() == StatusMeta.CONQUISTADA
+                ? BigDecimal.ZERO : meta.getValorMeta().subtract(meta.getValorGuardado());
+        double percentual = meta.getValorGuardado()
+                .divide(meta.getValorMeta(), 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100)).doubleValue();
+        return new MetaResponseDTO(meta.getId(), meta.getNomeMeta(), meta.getValorGuardado(),
+                meta.getValorMeta(), valorRestante, percentual, meta.getStatus());
     }
 }
