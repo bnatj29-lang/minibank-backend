@@ -4,9 +4,14 @@ API REST do projeto **Minibank**, desenvolvida em Java 17 com Spring Boot.
 
 O acesso ao MySQL é feito com `JdbcTemplate` e SQL explícito, sem Hibernate/JPA. A aplicação Spring Boot e o MySQL são executados localmente.
 
-## Funcionalidade disponível
+## Funcionalidades disponíveis
 
-- Cadastro de responsável e criança(s): `POST /contas/cadastro`
+- Cadastro de responsável e uma ou mais crianças: `POST /contas/cadastro`
+- Login com JWT: `POST /autenticar/login`
+- Recuperação de senha por e-mail usando Resend
+- Crianças, financeiro, extrato, metas, missões e configuração de mesada
+- Solicitação de conquista de meta e aprovação/recusa pelo responsável
+- Autorização por família: o responsável só acessa suas próprias crianças e recursos relacionados
 
 ## Tecnologias
 
@@ -82,12 +87,14 @@ cd minibank-backend
 
 Se o projeto já estiver no computador, use `cd` para acessar a pasta onde ele foi salvo.
 
-### 4. Configure a senha e inicie a API
+### 4. Configure as variáveis e inicie a API
 
 Por padrão, a aplicação tenta acessar o MySQL com usuário `root`, senha `root` e porta `3306`. Se a senha do seu MySQL for diferente, informe-a antes de iniciar a aplicação:
 
 ```bash
 export DB_PASSWORD=SUA_SENHA_DO_MYSQL
+export MINIBANK_JWT_SECRET='uma-chave-local-com-pelo-menos-32-caracteres'
+export MINIBANK_RESEND_API_KEY='sua-chave-do-resend'
 mvn spring-boot:run
 ```
 
@@ -174,6 +181,8 @@ Quando a inicialização terminar, a API estará disponível em:
 ```text
 http://localhost:8080
 ```
+
+`MINIBANK_JWT_SECRET` é obrigatória e não deve ser commitada. `MINIBANK_RESEND_API_KEY` é necessária para o envio real dos e-mails de recuperação. Também é possível configurar `MINIBANK_FRONTEND_URL` quando o frontend estiver em outro endereço, como um túnel de desenvolvimento.
 
 Na primeira inicialização, o Spring executa automaticamente o arquivo `src/main/resources/schema.sql` e cria as tabelas `usuario` e `crianca`.
 
