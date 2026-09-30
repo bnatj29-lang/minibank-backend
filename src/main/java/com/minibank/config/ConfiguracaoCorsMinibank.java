@@ -8,6 +8,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 public class ConfiguracaoCorsMinibank {
@@ -18,7 +19,9 @@ public class ConfiguracaoCorsMinibank {
     @Bean
     public CorsConfigurationSource configuracaoCors() {
         CorsConfiguration configuracao = new CorsConfiguration();
-        configuracao.setAllowedOrigins(List.of("http://localhost:5173", frontendUrl));
+        configuracao.setAllowedOrigins(Stream.of("http://localhost:5173", normalizarOrigem(frontendUrl))
+                .distinct()
+                .toList());
         configuracao.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuracao.setAllowedHeaders(List.of("Content-Type", "Authorization"));
         configuracao.setAllowCredentials(false);
@@ -27,5 +30,20 @@ public class ConfiguracaoCorsMinibank {
         UrlBasedCorsConfigurationSource origem = new UrlBasedCorsConfigurationSource();
         origem.registerCorsConfiguration("/**", configuracao);
         return origem;
+    }
+
+    private String normalizarOrigem(String origem) {
+        if (origem == null || origem.isBlank()) {
+            return "http://localhost:5173";
+        }
+
+        String normalizada = origem.trim();
+        if (normalizada.length() >= 2 && normalizada.startsWith("\"") && normalizada.endsWith("\"")) {
+            normalizada = normalizada.substring(1, normalizada.length() - 1).trim();
+        }
+        while (normalizada.endsWith("/")) {
+            normalizada = normalizada.substring(0, normalizada.length() - 1);
+        }
+        return normalizada;
     }
 }
